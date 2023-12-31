@@ -2,3 +2,8 @@
 /.venv/
 .env
 vcs.xml
+/.idea/api_blood_pressure_log.iml
+/data.db
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
