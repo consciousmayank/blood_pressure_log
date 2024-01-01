@@ -45,9 +45,7 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
                 imageUrl: viewModel.recordToShow.imageUrl,
               ),
             ),
-
-          if (viewModel.recordToShow.imageUrl.isNotEmpty)
-            verticalSpaceLarge,
+          if (viewModel.recordToShow.imageUrl.isNotEmpty) verticalSpaceLarge,
           Row(
             children: [
               Expanded(
@@ -56,7 +54,8 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
                   children: [
                     const Text("Diastolic Value"),
                     AppRichTextView(
-                      title: viewModel.recordToShow.diastolicValue.toStringAsFixed(
+                      title:
+                          viewModel.recordToShow.diastolicValue.toStringAsFixed(
                         2,
                       ),
                       fontSize: 25,
@@ -74,7 +73,8 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
                   children: [
                     const Text("Systolic Value"),
                     AppRichTextView(
-                      title: viewModel.recordToShow.systolicValue.toStringAsFixed(
+                      title:
+                          viewModel.recordToShow.systolicValue.toStringAsFixed(
                         2,
                       ),
                       fontSize: 25,
@@ -89,7 +89,6 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
             ],
           ),
           verticalSpaceMedium,
-
           ButtonBar(
             children: [
               // ElevatedButton(

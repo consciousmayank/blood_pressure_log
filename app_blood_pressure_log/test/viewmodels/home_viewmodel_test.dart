@@ -1,8 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:app_blood_pressure_log/app/app.bottomsheets.dart';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
-import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
 import 'package:app_blood_pressure_log/ui/views/home/home_viewmodel.dart';
 
 import '../helpers/test_helpers.dart';

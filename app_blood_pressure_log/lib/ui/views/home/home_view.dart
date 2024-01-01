@@ -1,16 +1,14 @@
-import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
 import 'package:app_blood_pressure_log/ui/views/home/record_list_view.dart';
 import 'package:app_blood_pressure_log/ui/widgets/common/blood_monitor_help/blood_monitor_help.dart';
 import 'package:flutter/material.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 import 'home_viewmodel.dart';
 
 class HomeView extends StackedView<HomeViewModel> {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   Widget builder(

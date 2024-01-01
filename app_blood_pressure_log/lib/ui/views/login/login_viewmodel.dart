@@ -1,6 +1,5 @@
 import 'package:app_blood_pressure_log/app/app.router.dart';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
-import 'package:app_blood_pressure_log/app/app.router.dart';
 import 'package:app_blood_pressure_log/services/app_network_service.dart';
 import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
 import 'package:app_blood_pressure_log/ui/views/login/login_view.form.dart';

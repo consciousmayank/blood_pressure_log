@@ -13,7 +13,6 @@ import 'package:stacked_services/stacked_services.dart';
 class AddEntryDialogModel extends FormViewModel {
   String imageUrl = '';
   final IAppNetworkService _networkService = locator<AppNetworkService>();
-  final NavigationService _navigationService = locator<NavigationService>();
   String? imageBase64String;
   AppImagePickerService? imageFilePickService;
 

@@ -5,10 +5,12 @@ import 'package:stacked/stacked.dart';
 import 'app_image_container_model.dart';
 
 class AppImageContainer extends StackedView<AppImageContainerModel> {
-
   final String imageUrl;
 
-  const AppImageContainer({super.key, required this.imageUrl,});
+  const AppImageContainer({
+    super.key,
+    required this.imageUrl,
+  });
 
   @override
   Widget builder(
@@ -23,8 +25,7 @@ class AppImageContainer extends StackedView<AppImageContainerModel> {
         errorWidget: (context, url, error) => const Icon(Icons.error),
         httpHeaders: {
           "Authorization": viewModel.fetchToken(),
-        }
-    );
+        });
   }
 
   @override

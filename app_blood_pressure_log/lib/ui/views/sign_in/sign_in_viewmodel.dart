@@ -24,8 +24,7 @@ class SignInViewModel extends FormViewModel with IndexTrackingStateHelper {
     if (formValid()) {
       bool accountCreateResponse = await runBusyFuture(
         _networkService.createAccount(
-            email: userEmailValue!,
-            password: passwordValue!),
+            email: userEmailValue!, password: passwordValue!),
         busyObject: accountCreateBusyObject,
       );
 
@@ -39,8 +38,7 @@ class SignInViewModel extends FormViewModel with IndexTrackingStateHelper {
   Future<bool> validateCode() async {
     if (validationCodeValid()) {
       bool validateAccount = await runBusyFuture(
-        _networkService.validateAccount(
-            validationCode: validationCodeValue!),
+        _networkService.validateAccount(validationCode: validationCodeValue!),
         busyObject: accountCreateBusyObject,
       );
 
