@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Permission options for the `camera` group -->
+    <key>NSCameraUsageDescription</key>
+    <string>This will allow you to upload an image of readings into the application.</string>
+    <!-- Permission options for the `photos` group -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>photos</string>
 </dict>
 </plist>

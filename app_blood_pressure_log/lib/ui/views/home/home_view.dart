@@ -1,7 +1,11 @@
+import 'package:app_blood_pressure_log/app/app.locator.dart';
+import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
+import 'package:app_blood_pressure_log/ui/views/home/record_list_view.dart';
+import 'package:app_blood_pressure_log/ui/widgets/common/blood_monitor_help/blood_monitor_help.dart';
 import 'package:flutter/material.dart';
+import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
-import 'package:app_blood_pressure_log/ui/common/app_colors.dart';
-import 'package:app_blood_pressure_log/ui/common/ui_helpers.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import 'home_viewmodel.dart';
 
@@ -15,66 +19,74 @@ class HomeView extends StackedView<HomeViewModel> {
     Widget? child,
   ) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Blood Pressure Monitor'),
+        actions: [
+          ThemePopUpMenuWidget(
+            options: <PopUpMenuOptions>[
+              PopUpMenuOptions(
+                menuValue: 1,
+                onMenuItemSelected: () {
+                  viewModel.openAddNewRecordView();
+                },
+                menuIcon: const Icon(
+                  Icons.add,
+                ),
+                menuTitle: 'New Entry',
+              ),
+              PopUpMenuOptions(
+                menuValue: 2,
+                onMenuItemSelected: () {
+                  viewModel.logout();
+                },
+                menuIcon: const Icon(
+                  Icons.logout,
+                ),
+                menuTitle: 'Logout',
+              ),
+              if (viewModel.recordsList.isNotEmpty)
+                PopUpMenuOptions(
+                  menuValue: 3,
+                  onMenuItemSelected: () {
+                    viewModel.showHelp();
+                  },
+                  menuIcon: const Icon(
+                    Icons.help,
+                  ),
+                  menuTitle: 'Help',
+                )
+            ],
+            toolTip: 'Select an option',
+            icon: Icon(
+              Icons.more_vert_rounded,
+              color: Theme.of(context).primaryColor,
+            ),
+          )
+        ],
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                verticalSpaceLarge,
-                Column(
-                  children: [
-                    const Text(
-                      'Hello, STACKED!',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    verticalSpaceMedium,
-                    MaterialButton(
-                      color: Colors.black,
-                      onPressed: viewModel.incrementCounter,
-                      child: Text(
-                        viewModel.counterLabel,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MaterialButton(
-                      color: kcDarkGreyColor,
-                      onPressed: viewModel.showDialog,
-                      child: const Text(
-                        'Show Dialog',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    MaterialButton(
-                      color: kcDarkGreyColor,
-                      onPressed: viewModel.showBottomSheet,
-                      child: const Text(
-                        'Show Bottom Sheet',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: viewModel.busy(fetchRecordsBusyObject)
+              ? const Center(
+                  child: CircularProgressIndicator(),
                 )
-              ],
-            ),
-          ),
+              : viewModel.recordsList.isEmpty
+                  ? BloodMonitorHelp(
+                      onFirstEntryMade: () {
+                        viewModel.fetchAllRecords();
+                      },
+                    )
+                  : const RecordListView(),
         ),
       ),
     );
+  }
+
+  @override
+  void onViewModelReady(HomeViewModel viewModel) {
+    viewModel.fetchAllRecords();
+    super.onViewModelReady(viewModel);
   }
 
   @override

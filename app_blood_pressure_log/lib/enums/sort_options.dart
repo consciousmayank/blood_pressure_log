@@ -1,0 +1,4 @@
+enum SortOptions {
+  orderByDateAsc,
+  orderByIdDsc,
+}

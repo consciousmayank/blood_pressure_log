@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_blood_pressure_log/ui/common/app_colors.dart';
-import 'package:app_blood_pressure_log/ui/common/ui_helpers.dart';
+import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
