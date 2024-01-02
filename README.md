@@ -54,4 +54,10 @@ Application
 
 - [Login Screen](https://f005.backblazeb2.com/file/for-apps/1_login_page.png)
 - [Sign In Screen](https://f005.backblazeb2.com/file/for-apps/2_sign_up_screen_1.png)
+- [Otp Screen](https://f005.backblazeb2.com/file/for-apps/2_sign_up_screen_2.png)
+- [Sign up complete](https://f005.backblazeb2.com/file/for-apps/2_sign_up_screen_3.png)
+- [Home Screen with no records](https://f005.backblazeb2.com/file/for-apps/3_home_screen_when_no_records.png)
+- [Add Entry Dialog](https://f005.backblazeb2.com/file/for-apps/4_add_entry_screen.png)
+- [Home Screen with record](https://f005.backblazeb2.com/file/for-apps/5_home_screen_when_records_are_there.png)
+- [View Entry BottomSheet](https://f005.backblazeb2.com/file/for-apps/6_view_record_bottom_sheet.png)
 
