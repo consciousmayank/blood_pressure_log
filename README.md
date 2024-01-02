@@ -3,7 +3,7 @@
 
 In this project I am trying to learn and build 
 - Api's via FastApi Python, and
-- An accompanying application, consuming the api's.
+- An accompanying application made in Flutter, consuming the api's. As of now the application is for Android and iOS. Plan is there to support web platform soon.
 
 
 
@@ -45,5 +45,7 @@ Application
 - Implement pagination while fetching records.
 - Profile for a user. 
 - Push notification implementation
+- A better and mordern looking UI for the application. As of now only using the native elements from flutter.
+- Support the web front of the application too with proper UI.
 
 
