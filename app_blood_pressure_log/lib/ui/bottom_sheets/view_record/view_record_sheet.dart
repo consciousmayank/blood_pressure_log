@@ -37,51 +37,69 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (viewModel.recordToShow.imageUrl.isNotEmpty)
-            Card(
-              elevation: 5,
-              clipBehavior: Clip.antiAlias,
-              child: AppImageContainer(
-                imageUrl: viewModel.recordToShow.imageUrl,
-              ),
-            ),
-          if (viewModel.recordToShow.imageUrl.isNotEmpty) verticalSpaceLarge,
           Row(
             children: [
               Expanded(
                 flex: 1,
-                child: Column(
-                  children: [
-                    const Text("Diastolic Value"),
-                    AppRichTextView(
-                      title:
-                          viewModel.recordToShow.diastolicValue.toStringAsFixed(
-                        2,
-                      ),
-                      fontSize: 25,
-                      fontWeight: FontWeight.normal,
-                      textColor: Colors.black,
-                      maxLines: 1,
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
+                child: (viewModel.recordToShow.imageUrl.isNotEmpty)
+                    ? Card(
+                        elevation: 5,
+                        clipBehavior: Clip.antiAlias,
+                        child: AppImageContainer(
+                          imageUrl: viewModel.recordToShow.imageUrl,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ),
               Expanded(
                 flex: 1,
                 child: Column(
                   children: [
-                    const Text("Systolic Value"),
-                    AppRichTextView(
-                      title:
-                          viewModel.recordToShow.systolicValue.toStringAsFixed(
-                        2,
-                      ),
-                      fontSize: 25,
-                      fontWeight: FontWeight.normal,
-                      textColor: Colors.black,
-                      maxLines: 1,
-                      textAlign: TextAlign.left,
+                    Column(
+                      children: [
+                        const Text("Diastolic Value"),
+                        AppRichTextView(
+                          title: viewModel.recordToShow.diastolicValue
+                              .toStringAsFixed(
+                            2,
+                          ),
+                          fontSize: 25,
+                          fontWeight: FontWeight.normal,
+                          textColor: Colors.black,
+                          maxLines: 1,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Systolic Value"),
+                        AppRichTextView(
+                          title: viewModel.recordToShow.systolicValue
+                              .toStringAsFixed(
+                            2,
+                          ),
+                          fontSize: 25,
+                          fontWeight: FontWeight.normal,
+                          textColor: Colors.black,
+                          maxLines: 1,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    Column(
+                      children: [
+                        const Text("Created On"),
+                        AppRichTextView(
+                          title: DateTimeToStringConverter.ddMMMMyyyy(date: viewModel.recordToShow.logTime!).convert(),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          textColor: Colors.black,
+                          maxLines: 1,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
                     ),
                   ],
                 ),

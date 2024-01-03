@@ -59,8 +59,8 @@ class AppNetworkService implements IAppNetworkService {
     _httpClient = Dio(
       BaseOptions(
         receiveDataWhenStatusError: true,
-        // baseUrl: "https://blood-pressure-log.onrender.com",
-        baseUrl: "http://127.0.0.1:8000",
+        baseUrl: "https://blood-pressure-log.onrender.com",
+        // baseUrl: "http://127.0.0.1:8000",
       ),
     );
 

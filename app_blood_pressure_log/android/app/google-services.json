@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "25062643661",
+    "project_id": "blood-pressure-logs-80128",
+    "storage_bucket": "blood-pressure-logs-80128.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25062643661:android:dda8b0a325729009c91684",
+        "android_client_info": {
+          "package_name": "com.mflutterapps.app_blood_pressure_log"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADRMkA8PoPdFSAwxYH1fwp1nnkzRSALj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
