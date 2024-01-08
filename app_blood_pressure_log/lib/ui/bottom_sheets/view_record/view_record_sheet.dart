@@ -92,7 +92,9 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
                       children: [
                         const Text("Created On"),
                         AppRichTextView(
-                          title: DateTimeToStringConverter.ddMMMMyyyy(date: viewModel.recordToShow.logTime!).convert(),
+                          title: DateTimeToStringConverter.ddMMMMyyyy(
+                                  date: viewModel.recordToShow.logTime!)
+                              .convert(),
                           fontSize: 12,
                           fontWeight: FontWeight.normal,
                           textColor: Colors.black,

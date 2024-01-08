@@ -13,6 +13,7 @@ import 'package:stacked_shared/stacked_shared.dart';
 
 import '../services/app_network_service.dart';
 import '../services/app_preferences_service.dart';
+import '../services/push_notifications_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -25,11 +26,16 @@ Future<void> setupLocator({
       environment: environment, environmentFilter: environmentFilter);
 
 // Register dependencies
+  final appPreferencesService = AppPreferencesService();
+  await appPreferencesService.init();
+  locator.registerSingleton(appPreferencesService);
+
+  final pushNotificationsService = PushNotificationsService();
+  await pushNotificationsService.init();
+  locator.registerSingleton(pushNotificationsService);
+
   locator.registerLazySingleton(() => BottomSheetService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => AppNetworkService());
-  final appPreferencesService = AppPreferencesService();
-  await appPreferencesService.init();
-  locator.registerSingleton(appPreferencesService);
 }

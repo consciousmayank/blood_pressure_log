@@ -7,7 +7,7 @@ import 'package:stacked/stacked_annotations.dart';
 import 'login_viewmodel.dart';
 
 @FormView(fields: [
-  FormTextField(name: 'userEmail', initialValue: "test@gmail.com"),
+  FormTextField(name: 'userEmail', initialValue: "test1@gmail.com"),
   FormTextField(name: 'password', initialValue: "test@121"),
 ])
 class LoginView extends StackedView<LoginViewModel> with $LoginView {

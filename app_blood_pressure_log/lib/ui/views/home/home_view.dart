@@ -1,3 +1,5 @@
+import 'package:app_blood_pressure_log/app/app.locator.dart';
+import 'package:app_blood_pressure_log/services/push_notifications_service.dart';
 import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
 import 'package:app_blood_pressure_log/ui/views/home/record_list_view.dart';
 import 'package:app_blood_pressure_log/ui/widgets/common/blood_monitor_help/blood_monitor_help.dart';
@@ -52,7 +54,7 @@ class HomeView extends StackedView<HomeViewModel> {
                     Icons.help,
                   ),
                   menuTitle: 'Help',
-                )
+                ),
             ],
             toolTip: 'Select an option',
             icon: Icon(

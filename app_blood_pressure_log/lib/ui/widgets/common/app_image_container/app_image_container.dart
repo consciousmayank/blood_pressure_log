@@ -20,8 +20,8 @@ class AppImageContainer extends StackedView<AppImageContainerModel> {
     Widget? child,
   ) {
     return CachedNetworkImage(
-      height: screenWidth(context) * 0.50,
-        width: screenWidth(context)/2,
+        height: screenWidth(context) * 0.50,
+        width: screenWidth(context) / 2,
         fit: BoxFit.fitWidth,
         imageUrl: imageUrl,
         progressIndicatorBuilder: (context, url, downloadProgress) =>

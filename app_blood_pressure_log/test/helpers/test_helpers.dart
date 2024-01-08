@@ -1,3 +1,4 @@
+import 'package:app_blood_pressure_log/main.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
@@ -88,6 +89,7 @@ MockAppPreferencesService getAndRegisterAppPreferencesService() {
   locator.registerSingleton<AppPreferencesService>(service);
   return service;
 }
+
 // @stacked-mock-create
 
 void _removeRegistrationIfExists<T extends Object>() {

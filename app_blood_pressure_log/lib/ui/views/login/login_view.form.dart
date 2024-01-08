@@ -26,7 +26,7 @@ final Map<String, String? Function(String?)?> _LoginViewTextValidations = {
 mixin $LoginView {
   TextEditingController get userEmailController =>
       _getFormTextEditingController(UserEmailValueKey,
-          initialValue: 'test@gmail.com');
+          initialValue: 'test1@gmail.com');
   TextEditingController get passwordController =>
       _getFormTextEditingController(PasswordValueKey, initialValue: 'test@121');
 

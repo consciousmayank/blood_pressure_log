@@ -7,13 +7,19 @@ import 'package:app_blood_pressure_log/app/app.router.dart';
 import 'package:app_blood_pressure_log/enums/sort_options.dart';
 import 'package:app_blood_pressure_log/model_classes/app_configs.dart';
 import 'package:app_blood_pressure_log/model_classes/create_record_response.dart';
+import 'package:app_blood_pressure_log/model_classes/fcm_token_save_request.dart';
 import 'package:app_blood_pressure_log/model_classes/get_app_records_response.dart';
+import 'package:app_blood_pressure_log/model_classes/logged_in_user.dart';
 import 'package:app_blood_pressure_log/model_classes/login_response.dart';
 import 'package:app_blood_pressure_log/model_classes/record.dart';
 import 'package:app_blood_pressure_log/services/app_preferences_service.dart';
+import 'package:app_blood_pressure_log/services/push_notifications_service.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import '../main.dart';
 
 enum _HttpMethod { get, post, put, delete }
 
@@ -46,6 +52,10 @@ abstract class IAppNetworkService {
   Future<bool> validateAccount({required String validationCode});
 
   Future<bool> fetchAppConfigs();
+
+  Future<LoggedInUser> fetchLoggedInUserDetails();
+
+  void saveFcmToken({String? token});
 }
 
 class AppNetworkService implements IAppNetworkService {
@@ -59,8 +69,10 @@ class AppNetworkService implements IAppNetworkService {
     _httpClient = Dio(
       BaseOptions(
         receiveDataWhenStatusError: true,
-        baseUrl: "https://blood-pressure-log.onrender.com",
+        // baseUrl: "https://blood-pressure-log.onrender.com",
         // baseUrl: "http://127.0.0.1:8000",
+        baseUrl: "http://192.168.29.253:8000",
+        // baseUrl: "http://10.0.2.2:8000",
       ),
     );
 
@@ -334,6 +346,10 @@ class AppNetworkService implements IAppNetworkService {
 
     if (loginResponse.accessToken.isNotEmpty) {
       _preferencesService.saveToken(token: loginResponse.accessToken);
+      // LoggedInUser loggedInUser = await fetchLoggedInUserDetails();
+      final fcmToken = await locator<PushNotificationsService>().fetchFcmToken();
+      saveFcmToken(token: fcmToken);
+
       return true;
     } else {
       return false;
@@ -386,6 +402,23 @@ class AppNetworkService implements IAppNetworkService {
     _preferencesService.saveImageToken(token: appConfig.token);
 
     return true;
+  }
+
+  @override
+  Future<LoggedInUser> fetchLoggedInUserDetails() async {
+    Response response = await _makeHttpRequest(
+        method: _HttpMethod.get, path: '/user', sendToken: true);
+    return LoggedInUser(userid: response.data['user_id']);
+  }
+
+  @override
+  void saveFcmToken({String? token}) async {
+    await _makeHttpRequest(
+      method: _HttpMethod.post,
+      path: '/savePNToken',
+      sendToken: true,
+      body: FcmTokenSaveRequest(token: token!).toMap()
+    );
   }
 }
 

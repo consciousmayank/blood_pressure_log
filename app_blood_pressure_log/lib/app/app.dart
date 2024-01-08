@@ -1,3 +1,4 @@
+import 'package:app_blood_pressure_log/services/push_notifications_service.dart';
 import 'package:app_blood_pressure_log/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:app_blood_pressure_log/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:app_blood_pressure_log/ui/views/home/home_view.dart';
@@ -10,6 +11,7 @@ import 'package:app_blood_pressure_log/services/app_preferences_service.dart';
 import 'package:app_blood_pressure_log/ui/views/login/login_view.dart';
 import 'package:app_blood_pressure_log/ui/views/sign_in/sign_in_view.dart';
 import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_sheet.dart';
+
 // @stacked-import
 
 @StackedApp(routes: [
@@ -19,11 +21,12 @@ import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_
   MaterialRoute(page: SignInView),
 // @stacked-route
 ], dependencies: [
+  InitializableSingleton(classType: AppPreferencesService),
+  InitializableSingleton(classType: PushNotificationsService),
   LazySingleton(classType: BottomSheetService),
   LazySingleton(classType: DialogService),
   LazySingleton(classType: NavigationService),
   LazySingleton(classType: AppNetworkService),
-  InitializableSingleton(classType: AppPreferencesService),
 // @stacked-service
 ], bottomsheets: [
   StackedBottomsheet(classType: NoticeSheet),
