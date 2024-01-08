@@ -28,6 +28,9 @@ Api Side
 - Save a blood pressure reading (systolic and diastolic Values).
 - Provision of Image upload to BlackBlaze.
 - Retrieve all the records from DB.
+- Saving FCM Token for a user, after login.
+- Send single Push notification to one user.
+- Send multiple Push notification to all users/List of users.
 
 Application
 - Sign In 
@@ -35,6 +38,8 @@ Application
 - Saving of token in shared preferences, and sending in headers, to api's which require them
 - Fetching all the records and showing them as per the date entered.
 - Showing the image from BlackBlaze bucket. The bucket is private and can be downloaded only after fetching the image_token from BlackBlaze.
+- Firebase FCM registration, sending the FCM Token to backend.
+- Recieving Push notification in mobile.
 
 
 
@@ -44,7 +49,6 @@ Application
 - Provision to update a record, where user can update the diastolic, systolic values and image. Once done the time will be saved in updated_on.
 - Implement pagination while fetching records.
 - Profile for a user. 
-- Push notification implementation
 - A better and mordern looking UI for the application. As of now only using the native elements from flutter.
 - Support the web front of the application too with proper UI.
 
