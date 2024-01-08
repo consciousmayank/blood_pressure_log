@@ -51,6 +51,7 @@ Application
 - Profile for a user. 
 - A better and mordern looking UI for the application. As of now only using the native elements from flutter.
 - Support the web front of the application too with proper UI.
+- When ever user sends a FCM token, save it if user has not token saved. Otherwise update the old one.
 
 
 
