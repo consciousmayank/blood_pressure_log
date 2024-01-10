@@ -1,17 +1,25 @@
+// To parse this JSON data, do
+//
+//     final records = recordsFromJson(jsonString);
+
 import 'dart:convert';
+
+List<Records> recordsFromJson(String str) => List<Records>.from(json.decode(str).map((x) => Records.fromJson(x)));
+
+String recordsToJson(List<Records> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Records {
   final int? id;
   final int systolicValue;
   final int diastolicValue;
-  final DateTime? logTime;
+  final DateTime? logDate;
   final String imageUrl;
 
   Records({
     this.id,
     required this.systolicValue,
     required this.diastolicValue,
-    this.logTime,
+    this.logDate,
     required this.imageUrl,
   });
 
@@ -19,39 +27,30 @@ class Records {
     int? id,
     int? systolicValue,
     int? diastolicValue,
-    DateTime? logTime,
+    DateTime? logDate,
     String? imageUrl,
   }) =>
       Records(
         id: id ?? this.id,
         systolicValue: systolicValue ?? this.systolicValue,
         diastolicValue: diastolicValue ?? this.diastolicValue,
-        logTime: logTime ?? this.logTime,
+        logDate: logDate ?? this.logDate,
         imageUrl: imageUrl ?? this.imageUrl,
       );
 
-  factory Records.fromRawJson(String str) => Records.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
   factory Records.fromJson(Map<String, dynamic> json) => Records(
-        id: json["id"],
-        systolicValue: json["systolic_value"],
-        diastolicValue: json["diastolic_value"],
-        logTime: DateTime.parse(json["log_time"]),
-        imageUrl: json["image_url"],
-      );
+    id: json["id"],
+    systolicValue: json["systolic_value"],
+    diastolicValue: json["diastolic_value"],
+    logDate: DateTime.parse(json["log_date"]),
+    imageUrl: json["image_url"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "systolic_value": systolicValue,
-        "diastolic_value": diastolicValue,
-        "log_time": logTime?.toIso8601String(),
-        "image_url": imageUrl,
-      };
-
-  Map<String, dynamic> toCreateRecordJson() => {
-        "systolic_value": systolicValue,
-        "diastolic_value": diastolicValue,
-      };
+    "id": id,
+    "systolic_value": systolicValue,
+    "diastolic_value": diastolicValue,
+    "log_date": logDate,
+    "image_url": imageUrl,
+  };
 }

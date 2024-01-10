@@ -11,7 +11,11 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:testsweets/testsweets.dart';
 
 Future<void> main() async {
+  // if(!DRIVE_MODE) {
   WidgetsFlutterBinding.ensureInitialized();
+  // }
+
+  // WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // await PushNotificationsService().initializePushNotifications();
   await setupLocator();
@@ -30,6 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, child) => TestSweetsOverlayView(
+        enabled: false,
         projectId: 'aZdxh4Os4egKBdNptpip',
         captureWidgets: true,
         child: child!,

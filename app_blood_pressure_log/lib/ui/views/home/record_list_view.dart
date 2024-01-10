@@ -1,4 +1,5 @@
 import 'package:app_blood_pressure_log/ui/views/home/home_viewmodel.dart';
+import 'package:app_blood_pressure_log/ui/widgets/common/app_image_container/app_image_container.dart';
 import 'package:flutter/material.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
@@ -63,9 +64,9 @@ class RecordListView extends ViewModelWidget<HomeViewModel> {
                       avatar: e.imageUrl.isEmpty
                           ? null
                           : ClipRRect(
-                              borderRadius: getBorderRadius(radius: 10),
+                              borderRadius: getBorderRadius(radius: 20),
                               clipBehavior: Clip.antiAlias,
-                              child: const Icon(Icons.abc),
+                              child: AppImageContainer(imageUrl: e.imageUrl, height: 25, width: 25,),
                             ),
                       shape: getCardShape(radius: 20),
                       padding: const EdgeInsets.all(2),

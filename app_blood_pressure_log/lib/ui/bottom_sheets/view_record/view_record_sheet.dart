@@ -37,74 +37,71 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          Column(
             children: [
-              Expanded(
-                flex: 1,
-                child: (viewModel.recordToShow.imageUrl.isNotEmpty)
-                    ? Card(
+              (viewModel.recordToShow.imageUrl.isNotEmpty)
+                  ? Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Card(
                         elevation: 5,
                         clipBehavior: Clip.antiAlias,
                         child: AppImageContainer(
                           imageUrl: viewModel.recordToShow.imageUrl,
                         ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    Column(
-                      children: [
-                        const Text("Diastolic Value"),
-                        AppRichTextView(
-                          title: viewModel.recordToShow.diastolicValue
-                              .toStringAsFixed(
-                            2,
-                          ),
-                          fontSize: 25,
-                          fontWeight: FontWeight.normal,
-                          textColor: Colors.black,
-                          maxLines: 1,
-                          textAlign: TextAlign.left,
+                      ),
+                  )
+                  : const SizedBox.shrink(),
+              Column(
+                children: [
+                  Column(
+                    children: [
+                      const Text("Diastolic Value"),
+                      AppRichTextView(
+                        title: viewModel.recordToShow.diastolicValue
+                            .toStringAsFixed(
+                          2,
                         ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const Text("Systolic Value"),
-                        AppRichTextView(
-                          title: viewModel.recordToShow.systolicValue
-                              .toStringAsFixed(
-                            2,
-                          ),
-                          fontSize: 25,
-                          fontWeight: FontWeight.normal,
-                          textColor: Colors.black,
-                          maxLines: 1,
-                          textAlign: TextAlign.left,
+                        fontSize: 25,
+                        fontWeight: FontWeight.normal,
+                        textColor: Colors.black,
+                        maxLines: 1,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const Text("Systolic Value"),
+                      AppRichTextView(
+                        title: viewModel.recordToShow.systolicValue
+                            .toStringAsFixed(
+                          2,
                         ),
-                      ],
-                    ),
-                    const Divider(),
-                    Column(
-                      children: [
-                        const Text("Created On"),
-                        AppRichTextView(
-                          title: DateTimeToStringConverter.ddMMMMyyyy(
-                                  date: viewModel.recordToShow.logTime!)
-                              .convert(),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
-                          textColor: Colors.black,
-                          maxLines: 1,
-                          textAlign: TextAlign.left,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        fontSize: 25,
+                        fontWeight: FontWeight.normal,
+                        textColor: Colors.black,
+                        maxLines: 1,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Column(
+                    children: [
+                      const Text("Created On"),
+                      AppRichTextView(
+                        title: DateTimeToStringConverter.ddMMMMyyyy(
+                                date: viewModel.recordToShow.logDate!)
+                            .convert(),
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        textColor: Colors.black,
+                        maxLines: 1,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

@@ -68,6 +68,7 @@ class HomeViewModel extends BaseViewModel {
       data: ViewRecordSheetModelInArguments(
         recordToShow: recordToView,
       ),
+      isScrollControlled: true
     );
   }
 }

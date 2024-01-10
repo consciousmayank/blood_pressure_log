@@ -7,7 +7,6 @@ import 'package:app_blood_pressure_log/app/app.router.dart';
 import 'package:app_blood_pressure_log/enums/sort_options.dart';
 import 'package:app_blood_pressure_log/model_classes/app_configs.dart';
 import 'package:app_blood_pressure_log/model_classes/create_record_response.dart';
-import 'package:app_blood_pressure_log/model_classes/fcm_token_save_request.dart';
 import 'package:app_blood_pressure_log/model_classes/get_app_records_response.dart';
 import 'package:app_blood_pressure_log/model_classes/logged_in_user.dart';
 import 'package:app_blood_pressure_log/model_classes/login_response.dart';
@@ -15,13 +14,10 @@ import 'package:app_blood_pressure_log/model_classes/record.dart';
 import 'package:app_blood_pressure_log/services/app_preferences_service.dart';
 import 'package:app_blood_pressure_log/services/push_notifications_service.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-import '../main.dart';
-
-enum _HttpMethod { get, post, put, delete }
+enum _HttpMethod { get, post, put, delete, multiPart }
 
 abstract class IAppNetworkService {
   Future<bool> createRecord({
@@ -68,6 +64,7 @@ class AppNetworkService implements IAppNetworkService {
   AppNetworkService() {
     _httpClient = Dio(
       BaseOptions(
+        connectTimeout: const Duration(minutes: 2),
         receiveDataWhenStatusError: true,
         // baseUrl: "https://blood-pressure-log.onrender.com",
         // baseUrl: "http://127.0.0.1:8000",
@@ -84,12 +81,14 @@ class AppNetworkService implements IAppNetworkService {
     required String path,
     Map<String, dynamic> queryParameters = const {},
     Map<String, dynamic> body = const {},
+    FormData? formData,
     bool verbose = false,
     bool verboseResponse = false,
     bool sendToken = true,
   }) async {
     try {
       final response = await _sendRequest(
+          formData: formData,
           method: method,
           path: path,
           queryParameters: queryParameters,
@@ -195,6 +194,7 @@ class AppNetworkService implements IAppNetworkService {
     Map<String, dynamic> queryParameters = const {},
     Map<String, dynamic> body = const {},
     bool sendToken = true,
+    FormData? formData,
   }) async {
     Response response;
     Options? requestOption;
@@ -230,6 +230,12 @@ class AppNetworkService implements IAppNetworkService {
           options: requestOption,
         );
         break;
+      case _HttpMethod.multiPart:
+        response = await _httpClient.post(
+          path,
+          options: requestOption,
+          data: formData,
+        );
       case _HttpMethod.get:
       default:
         response = await _httpClient.get(
@@ -247,21 +253,23 @@ class AppNetworkService implements IAppNetworkService {
     required Records record,
     File? imageFile,
   }) async {
+
+    var formData = FormData.fromMap({
+      "diastolic_value": record.diastolicValue,
+      "systolic_value": record.systolicValue,
+      "image": imageFile==null ? "" : await MultipartFile.fromFile(imageFile!.path, filename: "${record.systolicValue}_${record.diastolicValue}_${DateTime.now()}")
+    });
+
     Response response = await _makeHttpRequest(
-      method: _HttpMethod.post,
-      path: "/save_record",
-      body: record.toCreateRecordJson(),
-    );
+        method: _HttpMethod.multiPart,
+        path: "/save_record",
+        formData: formData,
+        sendToken: true);
+
     CreateRecordResponse createRecordResponse =
         CreateRecordResponse.fromJson(response.data);
-    if (imageFile != null) {
-      return await _uploadRecordImage(
-        recordId: createRecordResponse.id,
-        imageFile: imageFile,
-      );
-    } else {
-      return createRecordResponse.id > 0;
-    }
+
+    return response.statusCode == HttpStatus.ok;
   }
 
   @override
@@ -291,7 +299,7 @@ class AppNetworkService implements IAppNetworkService {
     );
     Map<String, List<Records>> dateFormattedList = {};
 
-    for (var singleDate in records.map((e) => e.logTime).toSet()) {
+    for (var singleDate in records.map((e) => e.logDate).toSet()) {
       dateFormattedList.putIfAbsent(
         DateTimeToStringConverter.ddMMMMyyyy(date: singleDate ?? DateTime.now())
             .convert(),
@@ -299,7 +307,7 @@ class AppNetworkService implements IAppNetworkService {
             .where(
               (element) =>
                   DateTimeToStringConverter.ddMMMMyyyy(
-                          date: element.logTime ?? DateTime.now())
+                          date: element.logDate ?? DateTime.now())
                       .convert() ==
                   DateTimeToStringConverter.ddMMMMyyyy(
                           date: singleDate ?? DateTime.now())
@@ -347,7 +355,8 @@ class AppNetworkService implements IAppNetworkService {
     if (loginResponse.accessToken.isNotEmpty) {
       _preferencesService.saveToken(token: loginResponse.accessToken);
       // LoggedInUser loggedInUser = await fetchLoggedInUserDetails();
-      final fcmToken = await locator<PushNotificationsService>().fetchFcmToken();
+      final fcmToken =
+          await locator<PushNotificationsService>().fetchFcmToken();
       saveFcmToken(token: fcmToken);
 
       return true;
@@ -383,9 +392,13 @@ class AppNetworkService implements IAppNetworkService {
 
   Future<bool> _uploadRecordImage(
       {required int recordId, required File imageFile}) async {
-    Response response = await _uploadFile(queryParameters: {
-      "record_id": recordId,
-    }, file: imageFile, fileName: 'image_record_${recordId}_${DateTime.now()}');
+    Response response = await _uploadFile(
+      queryParameters: {
+        "record_id": recordId,
+      },
+      file: imageFile,
+      fileName: 'image_record_${recordId}_${DateTime.now()}',
+    );
     return response.statusCode == 201;
   }
 
@@ -414,11 +427,10 @@ class AppNetworkService implements IAppNetworkService {
   @override
   void saveFcmToken({String? token}) async {
     await _makeHttpRequest(
-      method: _HttpMethod.post,
-      path: '/savePNToken',
-      sendToken: true,
-      body: FcmTokenSaveRequest(token: token!).toMap()
-    );
+        method: _HttpMethod.post,
+        path: '/saveFcmToken',
+        sendToken: true,
+        body: {"token": token});
   }
 }
 
@@ -428,18 +440,25 @@ class DioClientInterceptor extends QueuedInterceptorsWrapper {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     String? token = locator<AppPreferencesService>().fetchToken();
-    getLogger('TOKEN').wtf(token);
-    options.headers.putIfAbsent('Authorization', () => token);
+    getLogger('token      ').wtf(token);
+    getLogger('path       ').wtf(options.path);
+    if( options.data is! FormData){
+      getLogger('body       ').wtf(json.encode(options.data));
+    }
     super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    getLogger('statusCode ').wtf(response.statusCode);
+    getLogger('response   ').wtf(json.encode(response.data));
     super.onResponse(response, handler);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    getLogger('statusCode ').wtf(err.response?.statusCode);
+    getLogger('error   ').wtf(err.type.name);
     if (err.type == DioExceptionType.badResponse) {
       if (err.response?.statusCode == 401) {
         locator<DialogService>()
