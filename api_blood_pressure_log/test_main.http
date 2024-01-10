@@ -1,4 +1,4 @@
-@baseUrl =http://127.0.0.1:8000
+@baseUrl =http://192.168.29.253:8000
 
 ###Get the root endpoint.
 GET {{baseUrl}}
@@ -8,27 +8,27 @@ Accept: application/json
 GET {{baseUrl}}/app_configs
 
 ### Register User
-POST http://127.0.0.1:8000/register
+POST {{baseUrl}}/register
 accept: application/json
 Content-Type: application/json
 
 {
-  "email": "test1@gmail.com",
+  "email": "user1@gmail.com",
   "password": "test@121"
 }
 
 ### Otp Verify
-GET http://127.0.0.1:8000/verify/117918
+GET {{baseUrl}}/verify/114351
 accept: application/json
 
 ### Login
-POST http://127.0.0.1:8000/token
+POST {{baseUrl}}/token
 accept: application/json
 Content-Type: application/json
 
 {
-  "email": "test@gmail.com",
-  "password": "test@121"
+  "email": "user1@gmail.com",
+  "password": "Test@121"
 }
 
 > {%
@@ -43,7 +43,8 @@ Authorization: Bearer {{token}}
 
 {
   "systolic_value": 113456,
-  "diastolic_value": 223456
+  "diastolic_value": 223456,
+  "image": ""
 }
 
 
@@ -55,5 +56,21 @@ Authorization: Bearer {{token}}
 
 ###
 
+# curl -X POST --location "http://localhost/saveFcmToken"
+POST {{baseUrl}}/saveFcmToken
+accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
+{
+  "token": "f7zIekr-RCWSFf9C0Wk5QG:APA91bF8K6H17DSssYDqnY5z44HfRqlUcEddhsN7VMvIl1dZl04z7zLJNz-nG2DosIxVszkBouS1m6V9CEfyUVds7GW6CfDf28idGZkpnVz-MKCOvKtyAAKJnU30yA72omsqUOLyFssb"
+}
+
+### sendPushNotification
+POST {{baseUrl}}/sendPushNotification
+accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
 

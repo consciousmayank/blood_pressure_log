@@ -1,17 +1,20 @@
 import logging
 from random import randint
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status, Depends
 
 import tasks
 from database import database, otp_verification_table, user_table
-from models.users import UserIn
+from libs.firebase_lib import send_single_notification
+from models.fcm_token import FcmTokenIn
+from models.users import UserIn, User
 from security import (  # create_confirmation_token,
     authenticate_user,
     create_access_token,
     get_password_hash,
-    get_user_from_temp_user_table,
+    get_user_from_temp_user_table, get_current_user,
 )
+from typing import Annotated
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -94,3 +97,47 @@ async def verify_email_via_otp(otp: str):
     await database.execute(insert_to_users_table_query)
     await database.execute(delete_from_otp_table_query)
     return {"detail": "User confirmed"}
+
+
+@router.post("/saveFcmToken")
+async def save_fcm_token(
+        current_user: Annotated[User, Depends(get_current_user)],
+        token: FcmTokenIn,
+):
+    try:
+        print(token)
+        if token is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token cannot be empty",
+            )
+        query = user_table.update().where(user_table.c.id == current_user.id).values(fcm_token=token.token)
+        edited_row = await database.execute(query)
+        return {"message": "Token saved", "id": edited_row}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=e,
+        )
+
+
+@router.post("/sendPushNotification", include_in_schema=False)
+async def send_push_notification(current_user: Annotated[User, Depends(get_current_user)], ):
+    try:
+
+        response = await send_single_notification(user_id=current_user.id, title="Hello World", body="Hello World")
+
+        if isinstance(response, str):
+            return {
+                "message": "Message Sent"
+            }
+        else:
+            return {
+                "message": "Message Not Sent"
+            }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=e,
+        )

@@ -110,7 +110,6 @@ async def get_user_from_temp_user_table(email: str):
 
 
 async def authenticate_user(email: str, password: str):
-    logger.debug("Authenticating user", extra={"email": email})
     user = await get_user(email)
     if not user:
         raise create_credentials_exception("Invalid email or password")

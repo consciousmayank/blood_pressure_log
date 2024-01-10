@@ -14,6 +14,7 @@ user_table = sqlalchemy.Table(
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("email", sqlalchemy.String, unique=True),
     sqlalchemy.Column("password", sqlalchemy.String),
+    sqlalchemy.Column("fcm_token", sqlalchemy.String),
     sqlalchemy.Column("confirmed", sqlalchemy.Boolean, default=False),
 )
 
@@ -33,15 +34,8 @@ bpm_record = sqlalchemy.Table(
     sqlalchemy.Column("systolic_value", sqlalchemy.Integer),
     sqlalchemy.Column("diastolic_value", sqlalchemy.Integer),
     sqlalchemy.Column("log_date", sqlalchemy.DateTime),
-    sqlalchemy.Column("user_id", sqlalchemy.ForeignKey("users.id"), nullable=False),
-)
-
-images = sqlalchemy.Table(
-    "images",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("image_url", sqlalchemy.String),
-    sqlalchemy.Column("record_id", sqlalchemy.ForeignKey("record.id"), nullable=False),
+    sqlalchemy.Column("user_id", sqlalchemy.ForeignKey("users.id"), nullable=False),
 )
 
 # BoilerPlate code #

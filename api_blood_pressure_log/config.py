@@ -31,6 +31,8 @@ class GlobalConfig(BaseConfig):
     MAIL_SERVER: Optional[str] = None
     MAIL_FROM_NAME: Optional[str] = None
     FAST_API_ANALYTICS: Optional[str] = None
+    GOOGLE_PROJECT_KEY: Optional[str] = None
+    GOOGLE_SERVER_KEY_JSON_PATH: Optional[str] = None
 
 
 class DevConfig(GlobalConfig):
