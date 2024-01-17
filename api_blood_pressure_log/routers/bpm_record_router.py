@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
     "/get_records",
     response_model=list[BpmRecordOut],
 )
-async def get_records(current_user: Annotated[User, Depends(get_current_user)]):
+async def get_records(current_user: Annotated[User, Depends(get_current_user), ]):
     try:
         all_records_query = bpm_record.select().where(bpm_record.c.user_id == current_user.id)
         all_records = await database.fetch_all(all_records_query)

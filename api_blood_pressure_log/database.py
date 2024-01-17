@@ -15,17 +15,10 @@ user_table = sqlalchemy.Table(
     sqlalchemy.Column("email", sqlalchemy.String, unique=True),
     sqlalchemy.Column("password", sqlalchemy.String),
     sqlalchemy.Column("fcm_token", sqlalchemy.String),
+    sqlalchemy.Column("verification_code", sqlalchemy.String, default=None),
     sqlalchemy.Column("confirmed", sqlalchemy.Boolean, default=False),
 )
 
-otp_verification_table = sqlalchemy.Table(
-    "otp_verification",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("verification_code", sqlalchemy.String),
-    sqlalchemy.Column("password", sqlalchemy.String),
-    sqlalchemy.Column("email", sqlalchemy.String, unique=True),
-)
 
 bpm_record = sqlalchemy.Table(
     "record",

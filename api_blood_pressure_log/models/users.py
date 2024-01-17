@@ -9,3 +9,11 @@ class User(BaseModel):
 
 class UserIn(User):
     password: str
+
+
+class UserAvailable(BaseModel):
+    user_name: str
+
+
+class RefreshToken(BaseModel):
+    token: str

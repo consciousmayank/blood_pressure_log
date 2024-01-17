@@ -13,7 +13,7 @@ accept: application/json
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
+  "email": "bpluser_pycharm@yopmail.com",
   "password": "test@121"
 }
 
@@ -27,13 +27,26 @@ accept: application/json
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
+  "email": "bplusertwo@yopmail.com",
   "password": "Test@121"
 }
 
 > {%
     client.global.set("token", response.body["access_token"]);
 %}
+
+### Refresh Token
+
+POST {{baseUrl}}/token_refresh
+accept: application/json
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJicGx1c2VydHdvQHlvcG1haWwuY29tIiwiZXhwIjoxNzA1NTg3MTg1LCJ0eXBlIjoicmVmcmVzaCJ9.eS86PdlpP37Yu4wO1gQ7gn-VL8bOR-pCbfhK-Qigawo"
+}
+###
+
+
 
 ### Save a record
 POST {{baseUrl}}/save_record
@@ -72,5 +85,15 @@ accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+### Check if a userName is avaialable
+
+# curl -X GET --location "http://localhost/user_name_available"
+POST {{baseUrl}}/user_name_available
+accept: application/json
+Content-Type: application/json
+
+{
+  "user_name": "user2@gmail.com"
+}
 ###
 

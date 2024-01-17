@@ -4,15 +4,16 @@ from random import randint
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status, Depends
 
 import tasks
-from database import database, otp_verification_table, user_table
+from database import database, user_table
 from libs.firebase_lib import send_single_notification
 from models.fcm_token import FcmTokenIn
-from models.users import UserIn, User
+from models.users import UserIn, User, UserAvailable, RefreshToken
 from security import (  # create_confirmation_token,
     authenticate_user,
     create_access_token,
+    create_refresh_token,
     get_password_hash,
-    get_user_from_temp_user_table, get_current_user,
+    get_user_from_user_table, get_current_user, get_subject_for_token_type,
 )
 from typing import Annotated
 
@@ -22,23 +23,31 @@ router = APIRouter()
 
 @router.post("/register", status_code=201)
 async def register(user: UserIn, background_tasks: BackgroundTasks, request: Request):
-    if await get_user_from_temp_user_table(user.email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with that email already exists",
-        )
+    old_user = await get_user_from_user_table(user.email)
+    otp_to_verify: str = ''
+    if old_user is not None:
+        if old_user.c.confirmed:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="A user with that email already exists",
+            )
+        else:
+            otp_to_verify = old_user.c.verification_code
 
-    otp_to_verify = str(randint(100000, 999999))
+    if len(otp_to_verify) == 0:
+        otp_to_verify = str(randint(100000, 999999))
 
     try:
-        otp_verification_table_insert_query = otp_verification_table.insert().values(
-            email=user.email,
-            password=get_password_hash(user.password),
-            verification_code=otp_to_verify,
-        )
 
-        logger.debug(otp_verification_table_insert_query)
-        await database.execute(otp_verification_table_insert_query)
+        # insert otp_to_verify to user_table
+        user_id = await database.execute(user_table.insert().values(
+            email=user.email,
+            password=get_password_hash(password=user.password),
+            confirmed=False,
+            verification_code=otp_to_verify
+        ))
+        print(otp_to_verify)
+        print(user_id)
 
         background_tasks.add_task(
             tasks.send_user_registration_email,
@@ -61,42 +70,42 @@ async def register(user: UserIn, background_tasks: BackgroundTasks, request: Req
 async def login(user: UserIn):
     user = await authenticate_user(user.email, user.password)
     access_token = create_access_token(user.email)
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = create_refresh_token(email=user.email)
+    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
+
+
+@router.post("/token_refresh")
+async def token_refresh(refresh_token: RefreshToken):
+    user_email = get_subject_for_token_type(token=refresh_token.token, type="refresh")
+    access_token = create_access_token(user_email)
+    return {"access_token": access_token, "token_type": "refresh", "refresh_token": refresh_token.token}
 
 
 @router.get("/verify/{otp}")
 async def verify_email_via_otp(otp: str):
-    insert_to_users_table_query = otp_verification_table.select().where(
-        otp_verification_table.c.verification_code == otp
+    user_with_received_otp_query = user_table.select().where(
+        user_table.c.verification_code == otp
     )
 
-    logger.debug(f"for finding email from otp {insert_to_users_table_query}")
+    user_with_received_otp = await database.fetch_one(user_with_received_otp_query)
 
-    user = await database.fetch_one(insert_to_users_table_query)
-
-    if user.email is None:
+    if user_with_received_otp is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="OTP not found",
+            detail="Otp does not match",
         )
-
-    insert_to_users_table_query = user_table.insert().values(
-        email=user.email,
-        password=user.password,
-        confirmed=True,
-    )
-
-    logger.debug(insert_to_users_table_query)
-
-    delete_from_otp_table_query = otp_verification_table.delete().where(
-        otp_verification_table.c.verification_code == otp
-    )
-
-    logger.debug(delete_from_otp_table_query)
-
-    await database.execute(insert_to_users_table_query)
-    await database.execute(delete_from_otp_table_query)
-    return {"detail": "User confirmed"}
+    else:
+        if user_with_received_otp.verification_code != otp:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Otp does not match",
+            )
+        else:
+            user_id = await database.execute(user_table.update().values(
+                confirmed=True,
+                verification_code=None
+            ))
+    return {"detail": "User confirmed", "user_id": user_id}
 
 
 @router.post("/saveFcmToken")
@@ -141,3 +150,13 @@ async def send_push_notification(current_user: Annotated[User, Depends(get_curre
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=e,
         )
+
+
+@router.post("/user_name_available")
+async def user_name_available(user: UserAvailable):
+    if await get_user_from_user_table(user.user_name):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user with that email already exists",
+        )
+    return {"detail": "UserName Available", }
