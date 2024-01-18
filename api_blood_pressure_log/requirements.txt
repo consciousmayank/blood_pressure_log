@@ -19,3 +19,4 @@ httpx
 # databases[asyncpg]
 databases[aiosqlite]
 jinja2
+firebase_admin
