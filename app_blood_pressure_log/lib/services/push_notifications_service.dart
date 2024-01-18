@@ -15,8 +15,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("${message.data}");
 }
 
-class PushNotificationsService implements InitializableDependency{
-
+class PushNotificationsService implements InitializableDependency {
   var log = getLogger("PushNotificationsService");
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -24,8 +23,7 @@ class PushNotificationsService implements InitializableDependency{
   Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    RemoteMessage? initialMessage =
-    await messaging.getInitialMessage();
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
@@ -40,10 +38,9 @@ class PushNotificationsService implements InitializableDependency{
 
   void _handleMessage(RemoteMessage message) {
     if (message.data['type'] == 'chat') {
-      log.wtf(message.data['type']); 
+      log.wtf(message.data['type']);
     }
   }
-
 
   Future initializePushNotifications() async {
     // You may set the permission requests to "provisional" which allows the user to choose what type
@@ -56,7 +53,8 @@ class PushNotificationsService implements InitializableDependency{
       log.wtf('Message data: ${message.data}');
 
       if (message.notification != null) {
-        log.wtf('Message also contained a notification: ${message.notification}');
+        log.wtf(
+            'Message also contained a notification: ${message.notification}');
       }
     });
     setupInteractedMessage();

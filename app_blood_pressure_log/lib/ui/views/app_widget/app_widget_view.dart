@@ -20,7 +20,6 @@ class AppWidgetView extends StatefulWidget {
 class _AppWidgetViewState extends State<AppWidgetView> {
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);

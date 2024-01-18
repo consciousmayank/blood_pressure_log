@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:app_blood_pressure_log/app/app.logger.dart';
 import 'package:app_blood_pressure_log/app/app.router.dart';
+import 'package:app_blood_pressure_log/enums/api_endpoints.dart';
 import 'package:app_blood_pressure_log/enums/sort_options.dart';
+import 'package:app_blood_pressure_log/model_classes/account_create_response.dart';
+import 'package:app_blood_pressure_log/model_classes/api_error.dart';
 import 'package:app_blood_pressure_log/model_classes/app_configs.dart';
 import 'package:app_blood_pressure_log/model_classes/create_record_response.dart';
 import 'package:app_blood_pressure_log/model_classes/get_app_records_response.dart';
 import 'package:app_blood_pressure_log/model_classes/logged_in_user.dart';
-import 'package:app_blood_pressure_log/model_classes/login_response.dart';
+import 'package:app_blood_pressure_log/model_classes/login/login_response.dart';
 import 'package:app_blood_pressure_log/model_classes/record.dart';
 import 'package:app_blood_pressure_log/services/app_preferences_service.dart';
 import 'package:app_blood_pressure_log/services/push_notifications_service.dart';
@@ -40,7 +43,7 @@ abstract class IAppNetworkService {
 
   Future<bool> loginUser({required String userName, required String password});
 
-  Future<bool> createAccount({
+  Future<AccountCreateResponse> createAccount({
     required String email,
     required String password,
   });
@@ -52,28 +55,30 @@ abstract class IAppNetworkService {
   Future<LoggedInUser> fetchLoggedInUserDetails();
 
   void saveFcmToken({String? token});
+
+  Future<String> isUserNameAvailable({required String userName});
 }
 
 class AppNetworkService implements IAppNetworkService {
+  final String baseUrl = "http://192.168.29.253:8000";
   final log = getLogger('HttpService');
-
-  late final Dio _httpClient;
   final InterFaceAppPreferences _preferencesService =
       locator<AppPreferencesService>();
+  late final Dio _httpClient;
 
   AppNetworkService() {
     _httpClient = Dio(
       BaseOptions(
         connectTimeout: const Duration(minutes: 2),
         receiveDataWhenStatusError: true,
-        // baseUrl: "https://blood-pressure-log.onrender.com",
-        // baseUrl: "http://127.0.0.1:8000",
-        baseUrl: "http://192.168.29.253:8000",
-        // baseUrl: "http://10.0.2.2:8000",
+        baseUrl: baseUrl,
       ),
     );
-
-    _httpClient.interceptors.add(DioClientInterceptor());
+    _httpClient.interceptors.add(
+      TokenInterceptor(
+        baseUrl: baseUrl,
+      ),
+    );
   }
 
   Future<Response> _makeHttpRequest({
@@ -103,15 +108,34 @@ class AppNetworkService implements IAppNetworkService {
       }
 
       return response;
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.unknown && e.error is SocketException) {
+    } on DioException catch (error) {
+      // if (error.type == DioExceptionType.badResponse) {
+      //   if (error.response?.statusCode == HttpStatus.unauthorized) {
+      //     locator<DialogService>()
+      //         .showConfirmationDialog(
+      //             barrierDismissible: false,
+      //             confirmationTitle: 'Sure',
+      //             title: 'Login Expired.',
+      //             description:
+      //                 'Your login has expired. You will have to login again.')
+      //         .then(
+      //       (value) {
+      //         locator<AppPreferencesService>().logout();
+      //         locator<NavigationService>().replaceWithLoginView();
+      //       },
+      //     );
+      //   }
+      // }
+
+      if (error.type == DioExceptionType.unknown &&
+          error.error is SocketException) {
         log.e(
           'This seems to be a network issue. Please check your network and try again.',
         );
         rethrow;
       }
 
-      if (e.type == DioErrorType.connectionTimeout) {
+      if (error.type == DioExceptionType.connectionTimeout) {
         log.e(
           'This seems to be a network issue. Please check your network and try again.',
         );
@@ -119,7 +143,7 @@ class AppNetworkService implements IAppNetworkService {
       }
 
       log.e(
-        'A response error occurred. ${e.response?.statusCode}\nERROR: ${e.message}',
+        'A response error occurred. ${error.response?.statusCode}\nERROR: ${error.message}',
       );
       rethrow;
     } catch (e) {
@@ -198,13 +222,6 @@ class AppNetworkService implements IAppNetworkService {
   }) async {
     Response response;
     Options? requestOption;
-    if (sendToken) {
-      requestOption = Options(
-        headers: {
-          "Authorization": "Bearer ${_preferencesService.fetchToken()}"
-        },
-      );
-    }
 
     switch (method) {
       case _HttpMethod.post:
@@ -253,16 +270,19 @@ class AppNetworkService implements IAppNetworkService {
     required Records record,
     File? imageFile,
   }) async {
-
     var formData = FormData.fromMap({
       "diastolic_value": record.diastolicValue,
       "systolic_value": record.systolicValue,
-      "image": imageFile==null ? "" : await MultipartFile.fromFile(imageFile!.path, filename: "${record.systolicValue}_${record.diastolicValue}_${DateTime.now()}")
+      "image": imageFile == null
+          ? ""
+          : await MultipartFile.fromFile(imageFile!.path,
+              filename:
+                  "${record.systolicValue}_${record.diastolicValue}_${DateTime.now()}")
     });
 
     Response response = await _makeHttpRequest(
         method: _HttpMethod.multiPart,
-        path: "/save_record",
+        path: ApiEndPoints.saveRecord.url,
         formData: formData,
         sendToken: true);
 
@@ -288,7 +308,7 @@ class AppNetworkService implements IAppNetworkService {
   }) async {
     Response apiResponse = await _makeHttpRequest(
       method: _HttpMethod.get,
-      path: "/get_records",
+      path: ApiEndPoints.getRecords.url,
       sendToken: true,
     );
 
@@ -345,7 +365,7 @@ class AppNetworkService implements IAppNetworkService {
   }) async {
     Response response = await _makeHttpRequest(
       method: _HttpMethod.post,
-      path: "/token",
+      path: ApiEndPoints.login.url,
       body: {"email": userName, "password": password},
       sendToken: false,
     );
@@ -353,7 +373,7 @@ class AppNetworkService implements IAppNetworkService {
     LoginResponse loginResponse = LoginResponse.fromJson(response.data);
 
     if (loginResponse.accessToken.isNotEmpty) {
-      _preferencesService.saveToken(token: loginResponse.accessToken);
+      _preferencesService.saveTokens(loginResponse: loginResponse);
       // LoggedInUser loggedInUser = await fetchLoggedInUserDetails();
       final fcmToken =
           await locator<PushNotificationsService>().fetchFcmToken();
@@ -366,47 +386,43 @@ class AppNetworkService implements IAppNetworkService {
   }
 
   @override
-  Future<bool> createAccount({
+  Future<AccountCreateResponse> createAccount({
     required String email,
     required String password,
   }) async {
     Response response = await _makeHttpRequest(
-        method: _HttpMethod.post,
-        path: '/register',
-        sendToken: false,
-        body: {"email": email, "password": password});
+      method: _HttpMethod.post,
+      path: ApiEndPoints.createAccount.url,
+      sendToken: false,
+      body: {
+        "email": email,
+        "password": password,
+      },
+    );
 
-    return response.statusCode == 201;
+    AccountCreateResponse accountCreateResponse = AccountCreateResponse.fromMap(
+      response.data,
+    );
+
+    return accountCreateResponse;
   }
 
   @override
   Future<bool> validateAccount({required String validationCode}) async {
     Response response = await _makeHttpRequest(
       method: _HttpMethod.get,
-      path: "/verify/$validationCode",
+      path: "${ApiEndPoints.validateAccount.url}$validationCode",
       sendToken: false,
     );
 
     return response.statusCode == 200;
   }
 
-  Future<bool> _uploadRecordImage(
-      {required int recordId, required File imageFile}) async {
-    Response response = await _uploadFile(
-      queryParameters: {
-        "record_id": recordId,
-      },
-      file: imageFile,
-      fileName: 'image_record_${recordId}_${DateTime.now()}',
-    );
-    return response.statusCode == 201;
-  }
-
   @override
   Future<bool> fetchAppConfigs() async {
     Response apiResponse = await _makeHttpRequest(
       method: _HttpMethod.get,
-      path: "/app_configs",
+      path: ApiEndPoints.fetchAppConfigs.url,
       sendToken: false,
     );
 
@@ -420,7 +436,9 @@ class AppNetworkService implements IAppNetworkService {
   @override
   Future<LoggedInUser> fetchLoggedInUserDetails() async {
     Response response = await _makeHttpRequest(
-        method: _HttpMethod.get, path: '/user', sendToken: true);
+        method: _HttpMethod.get,
+        path: ApiEndPoints.fetchUserDetails.url,
+        sendToken: true);
     return LoggedInUser(userid: response.data['user_id']);
   }
 
@@ -428,56 +446,91 @@ class AppNetworkService implements IAppNetworkService {
   void saveFcmToken({String? token}) async {
     await _makeHttpRequest(
         method: _HttpMethod.post,
-        path: '/saveFcmToken',
+        path: ApiEndPoints.saveFcmToken.url,
         sendToken: true,
         body: {"token": token});
   }
+
+  @override
+  Future<String> isUserNameAvailable({required String userName}) async {
+    Response response = await _makeHttpRequest(
+      method: _HttpMethod.post,
+      path: ApiEndPoints.isUserNameAvailable.url,
+      sendToken: false,
+      body: {"user_name": userName},
+    );
+
+    ApiError error = ApiError.fromMap(response.data);
+    return error.detail;
+  }
 }
 
-class DioClientInterceptor extends QueuedInterceptorsWrapper {
-  final log = getLogger('DioClientInterceptor');
+class TokenInterceptor extends Interceptor {
+  final String baseUrl;
+  late final Dio _dio;
+  final InterFaceAppPreferences _preferencesService =
+      locator<AppPreferencesService>();
+
+  TokenInterceptor({required this.baseUrl}) {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+      ),
+    );
+  }
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    String? token = locator<AppPreferencesService>().fetchToken();
-    getLogger('token      ').wtf(token);
-    getLogger('path       ').wtf(options.path);
-    if( options.data is! FormData){
-      getLogger('body       ').wtf(json.encode(options.data));
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    if(ApiEndPoints.none.isTokenRequired(apiEndPoint: ApiEndPoints.none.getApiEndPointFromUrl(path: options.path))){
+      options.headers['Authorization'] =
+      'Bearer ${_preferencesService.fetchToken()?.accessToken}';
     }
-    super.onRequest(options, handler);
+    handler.next(options);
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    getLogger('statusCode ').wtf(response.statusCode);
-    getLogger('response   ').wtf(json.encode(response.data));
-    super.onResponse(response, handler);
-  }
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == HttpStatus.unauthorized) {
+      try {
+        final Response refreshedToken = await _dio.post(
+            ApiEndPoints.refreshToken.url,
+            data: {"token": _preferencesService.fetchToken()?.refreshToken});
 
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    getLogger('statusCode ').wtf(err.response?.statusCode);
-    getLogger('error   ').wtf(err.type.name);
-    if (err.type == DioExceptionType.badResponse) {
-      if (err.response?.statusCode == 401) {
-        locator<DialogService>()
-            .showConfirmationDialog(
+        LoginResponse loginResponse =
+            LoginResponse.fromJson(refreshedToken.data);
+        _preferencesService.saveTokens(loginResponse: loginResponse);
+        // Retry the request with the new token
+        // Update the request header with the new access token
+        err.requestOptions.headers['Authorization'] =
+            'Bearer ${loginResponse.accessToken}';
+
+        // Repeat the request with the updated header
+        return handler.resolve(await _dio.fetch(err.requestOptions));
+      } on DioException catch (error) {
+        if (error.type == DioExceptionType.badResponse) {
+          if (error.response?.statusCode == HttpStatus.unauthorized) {
+            locator<DialogService>()
+                .showConfirmationDialog(
                 barrierDismissible: false,
                 confirmationTitle: 'Sure',
                 title: 'Login Expired.',
                 description:
-                    'Your login has expired. You will have to login again.')
-            .then(
-          (value) {
-            locator<AppPreferencesService>().logout();
-            locator<NavigationService>().replaceWithLoginView();
-          },
-        );
+                'Your login has expired. You will have to login again.')
+                .then(
+                  (value) {
+                locator<AppPreferencesService>().logout();
+                locator<NavigationService>().replaceWithLoginView();
+              },
+            );
+          }
+        }
+        // handler.next(err);
       }
     } else {
-      log.e(err.toString());
-      super.onError(err, handler);
+      handler.next(err);
     }
   }
 }

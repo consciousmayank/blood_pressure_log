@@ -63,12 +63,11 @@ class HomeViewModel extends BaseViewModel {
 
   void openRecordViewBottomSheet({required Records recordToView}) {
     _bottomSheetService.showCustomSheet(
-      barrierDismissible: true,
-      variant: BottomSheetType.viewRecord,
-      data: ViewRecordSheetModelInArguments(
-        recordToShow: recordToView,
-      ),
-      isScrollControlled: true
-    );
+        barrierDismissible: true,
+        variant: BottomSheetType.viewRecord,
+        data: ViewRecordSheetModelInArguments(
+          recordToShow: recordToView,
+        ),
+        isScrollControlled: true);
   }
 }

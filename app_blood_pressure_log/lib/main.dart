@@ -11,17 +11,12 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:testsweets/testsweets.dart';
 
 Future<void> main() async {
-  // if(!DRIVE_MODE) {
+  await setupTestSweets();
   WidgetsFlutterBinding.ensureInitialized();
-  // }
-
-  // WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // await PushNotificationsService().initializePushNotifications();
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
-  await setupTestSweets();
   runApp(
     const MyApp(),
   );

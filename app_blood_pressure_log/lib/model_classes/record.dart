@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-List<Records> recordsFromJson(String str) => List<Records>.from(json.decode(str).map((x) => Records.fromJson(x)));
+List<Records> recordsFromJson(String str) =>
+    List<Records>.from(json.decode(str).map((x) => Records.fromJson(x)));
 
-String recordsToJson(List<Records> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String recordsToJson(List<Records> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Records {
   final int? id;
@@ -39,18 +41,18 @@ class Records {
       );
 
   factory Records.fromJson(Map<String, dynamic> json) => Records(
-    id: json["id"],
-    systolicValue: json["systolic_value"],
-    diastolicValue: json["diastolic_value"],
-    logDate: DateTime.parse(json["log_date"]),
-    imageUrl: json["image_url"],
-  );
+        id: json["id"],
+        systolicValue: json["systolic_value"],
+        diastolicValue: json["diastolic_value"],
+        logDate: DateTime.parse(json["log_date"]),
+        imageUrl: json["image_url"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "systolic_value": systolicValue,
-    "diastolic_value": diastolicValue,
-    "log_date": logDate,
-    "image_url": imageUrl,
-  };
+        "id": id,
+        "systolic_value": systolicValue,
+        "diastolic_value": diastolicValue,
+        "log_date": logDate,
+        "image_url": imageUrl,
+      };
 }

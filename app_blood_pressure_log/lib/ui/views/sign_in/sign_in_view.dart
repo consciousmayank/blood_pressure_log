@@ -1,9 +1,11 @@
 import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
 import 'package:app_blood_pressure_log/ui/views/sign_in/sign_in_view.form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
+
 import 'sign_in_viewmodel.dart';
 
 @FormView(fields: [
@@ -45,45 +47,57 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   TextFormField(
-                    controller: userEmailController,
-                    focusNode: userEmailFocusNode,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      errorText: viewModel.userEmailValidationMessage,
-                      labelText: 'Enter Email',
-                      hintText: 'JohnDoe@yopmail.com',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      alignLabelWithHint: true,
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
-                    onEditingComplete: () => passwordFocusNode.requestFocus(),
-                    onFieldSubmitted: (value) =>
-                        passwordFocusNode.requestFocus(),
-                  ),
+                      controller: userEmailController,
+                      focusNode: userEmailFocusNode,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        suffix:
+                            viewModel.busy(checkUserNameAvailabilityBusyObject)
+                                ? const SizedBox(
+                                    height: 10,
+                                    width: 10,
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : viewModel.userNameDetails!=null ? viewModel.userNameAvailable
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                      )
+                                    : const Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                      ) : const SizedBox.shrink(),
+                        errorText: viewModel.userEmailValidationMessage,
+                        labelText: 'Enter Email',
+                        hintText: 'JohnDoe@yopmail.com',
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        alignLabelWithHint: true,
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                      onEditingComplete: () {
+                        viewModel.isUserNameAvailable();
+                        passwordFocusNode.requestFocus();
+                      },
+                      onFieldSubmitted: (value) {
+                        viewModel.isUserNameAvailable();
+                        passwordFocusNode.requestFocus();
+                      }),
                   TextFormField(
                     controller: passwordController,
                     focusNode: passwordFocusNode,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: viewModel.obscurePassword,
                     decoration: InputDecoration(
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          viewModel.obscurePassword =
-                              !viewModel.obscurePassword;
-                          viewModel.rebuildUi();
-                        },
-                        child: viewModel.obscurePassword
-                            ? const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                                color: Colors.grey,
-                              )
-                            : const Icon(
-                                Icons.visibility,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
-                      ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            viewModel.obscurePassword =
+                            !viewModel.obscurePassword;
+                            viewModel.rebuildUi();
+                          },
+                          icon: Icon(viewModel.obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined, size: 20,),
+                        ),
                       errorText: viewModel.passwordValidationMessage,
                       labelText: 'Enter password',
                       hintText: 'Password',
@@ -102,23 +116,15 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: viewModel.obscureReEnterPassword,
                     decoration: InputDecoration(
-                      suffixIcon: InkWell(
-                        onTap: () {
+                      suffixIcon: IconButton(
+                        onPressed: () {
                           viewModel.obscureReEnterPassword =
-                              !viewModel.obscureReEnterPassword;
+                          !viewModel.obscureReEnterPassword;
                           viewModel.rebuildUi();
                         },
-                        child: viewModel.obscureReEnterPassword
-                            ? const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                                color: Colors.grey,
-                              )
-                            : const Icon(
-                                Icons.visibility,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
+                        icon: Icon(viewModel.obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined, size: 20,),
                       ),
                       errorText: viewModel.reEnterPasswordValidationMessage,
                       labelText: 'Re-enter password',
@@ -133,7 +139,11 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                   verticalSpaceLarge,
                 ],
               ),
-            ),
+            ).animate().slideX(
+                  duration: 500.milliseconds,
+                  begin: 2,
+                  end: 0,
+                ),
             isActive: viewModel.currentIndex == 0,
             state: viewModel.currentIndex == 0
                 ? StepState.indexed
@@ -162,7 +172,7 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                     signed: false,
                   ),
                   decoration: InputDecoration(
-                    errorText: viewModel.userEmailValidationMessage,
+                    errorText: viewModel.validationCodeValidationMessage,
                     labelText: 'Enter Validation Code',
                     hintText: '12345678',
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -174,7 +184,11 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                 ),
                 verticalSpaceLarge,
               ],
-            ),
+            ).animate().slideX(
+                  duration: 500.milliseconds,
+                  begin: 2,
+                  end: 0,
+                ),
             isActive: viewModel.currentIndex == 1,
             state: viewModel.currentIndex < 2
                 ? StepState.indexed
@@ -199,7 +213,12 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                     'Welcome to BPM. You can use ${viewModel.userEmailValue} as the userId, along with the password provided.'),
                 verticalSpaceLarge
               ],
-            ),
+            ).animate()
+              ..slideY(
+                  delay: 200.milliseconds,
+                  duration: 1.seconds,
+                  begin: 100,
+                  end: 0),
 
             isActive: viewModel.currentIndex == 2,
             state: viewModel.currentIndex < 2
@@ -277,7 +296,12 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
             duration: const Duration(seconds: 2),
             child: viewModel.anyObjectsBusy
                 ? const CircularProgressIndicator()
-                : returningWidget,
+                : returningWidget?.animate().slideX(
+                      delay: 100.milliseconds,
+                      duration: 500.milliseconds,
+                      begin: details.currentStep % 2 == 0 ? 2 : -2,
+                      end: 0,
+                    ),
           );
         },
       ),

@@ -4,4 +4,6 @@ const String ksHomeBottomSheetDescription =
 const String fetchRecordsBusyObject = "fetchRecords";
 const String createRecordBusyObject = "createRecord";
 const String loginBusyObject = "login";
+const String checkUserNameAvailabilityBusyObject = "checkUserNameAvailabilityBusyObject";
 const String accountCreateBusyObject = "accountCreate";
+const String accountCreateValidationBusyObject = "accountCreateSendOtpBusyObject";

@@ -66,7 +66,11 @@ class RecordListView extends ViewModelWidget<HomeViewModel> {
                           : ClipRRect(
                               borderRadius: getBorderRadius(radius: 20),
                               clipBehavior: Clip.antiAlias,
-                              child: AppImageContainer(imageUrl: e.imageUrl, height: 25, width: 25,),
+                              child: AppImageContainer(
+                                imageUrl: e.imageUrl,
+                                height: 25,
+                                width: 25,
+                              ),
                             ),
                       shape: getCardShape(radius: 20),
                       padding: const EdgeInsets.all(2),

@@ -41,15 +41,15 @@ class ViewRecordSheet extends StackedView<ViewRecordSheetModel> {
             children: [
               (viewModel.recordToShow.imageUrl.isNotEmpty)
                   ? Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Card(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Card(
                         elevation: 5,
                         clipBehavior: Clip.antiAlias,
                         child: AppImageContainer(
                           imageUrl: viewModel.recordToShow.imageUrl,
                         ),
                       ),
-                  )
+                    )
                   : const SizedBox.shrink(),
               Column(
                 children: [

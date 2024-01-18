@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_blood_pressure_log/model_classes/login/login_response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -34,7 +35,7 @@ class AppPreferencesService
     }
 
     //declare hive adapters here
-    // Hive.registerAdapter(StoryResponseAdapter());
+    Hive.registerAdapter(LoginResponseAdapter());
     //declare hive adapters above
 
     await Hive.initFlutter();
@@ -56,23 +57,22 @@ class AppPreferencesService
   }
 
   @override
-  void saveToken({required String? token}) {
-    if (token == null) {
+  void saveTokens({required LoginResponse? loginResponse}) {
+    if (loginResponse == null) {
       appHelperBox.delete(_tokenKey);
     } else {
-      appHelperBox.put(_tokenKey, token);
+      appHelperBox.put(_tokenKey, loginResponse);
     }
   }
 
   @override
   bool isUserLoggedIn() {
-    String token = appHelperBox.get(_tokenKey, defaultValue: "");
-    return token.isNotEmpty;
+    return fetchToken() != null && fetchToken()?.accessToken!=null ;
   }
 
   @override
-  String fetchToken() {
-    String token = appHelperBox.get(_tokenKey, defaultValue: "");
+  LoginResponse? fetchToken() {
+    LoginResponse? token = appHelperBox.get(_tokenKey, defaultValue: null);
     return token;
   }
 
@@ -97,11 +97,11 @@ const String _tokenKey = 'tokenKey';
 const String _imageTokenKey = '_imageTokenKey';
 
 abstract class InterFaceAppPreferences {
-  void saveToken({required String? token});
+  void saveTokens({required LoginResponse? loginResponse});
 
   bool isUserLoggedIn();
 
-  String fetchToken();
+  LoginResponse? fetchToken();
 
   void logout();
 

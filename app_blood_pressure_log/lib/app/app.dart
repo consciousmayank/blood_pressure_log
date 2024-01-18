@@ -12,6 +12,7 @@ import 'package:app_blood_pressure_log/ui/views/login/login_view.dart';
 import 'package:app_blood_pressure_log/ui/views/sign_in/sign_in_view.dart';
 import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_sheet.dart';
 
+import 'package:app_blood_pressure_log/ui/bottom_sheets/errors/errors_sheet.dart';
 // @stacked-import
 
 @StackedApp(routes: [
@@ -31,6 +32,7 @@ import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_
 ], bottomsheets: [
   StackedBottomsheet(classType: NoticeSheet),
   StackedBottomsheet(classType: ViewRecordSheet),
+  StackedBottomsheet(classType: ErrorsSheet),
 // @stacked-bottom-sheet
 ], dialogs: [
   StackedDialog(classType: InfoAlertDialog),
