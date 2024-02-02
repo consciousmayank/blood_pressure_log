@@ -110,10 +110,10 @@ class StartupView extends StackedView<StartupViewModel> {
               ],
             ),
             verticalSpaceSmall,
-            title
-                .animate()
-                .moveY(begin: screenHeight(context), end: 0, duration: 900.milliseconds)
-            ,
+            title.animate().moveY(
+                begin: screenHeight(context),
+                end: 0,
+                duration: 900.milliseconds),
             verticalSpaceLarge,
             Row(
               mainAxisSize: MainAxisSize.min,

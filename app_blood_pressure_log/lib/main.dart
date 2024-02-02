@@ -4,6 +4,7 @@ import 'package:app_blood_pressure_log/app/app.bottomsheets.dart';
 import 'package:app_blood_pressure_log/app/app.dialogs.dart';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:app_blood_pressure_log/app/app.router.dart';
+import 'package:app_blood_pressure_log/app/app.snackbar.dart';
 import 'package:app_blood_pressure_log/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
+  setupSnackbarUi();
   runApp(
     const MyApp(),
   );

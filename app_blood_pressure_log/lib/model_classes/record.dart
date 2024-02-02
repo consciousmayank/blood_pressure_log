@@ -52,7 +52,7 @@ class Records {
         "id": id,
         "systolic_value": systolicValue,
         "diastolic_value": diastolicValue,
-        "log_date": logDate,
+        "log_date": logDate?.toIso8601String(),
         "image_url": imageUrl,
       };
 }

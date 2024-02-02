@@ -1,3 +1,4 @@
+import 'package:app_blood_pressure_log/ui/common/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:app_blood_pressure_log/ui/common/app_colors.dart';
 import 'package:helper_package/helper_package.dart';
@@ -10,10 +11,10 @@ class NoticeSheet extends StackedView<NoticeSheetModel> {
   final Function(SheetResponse)? completer;
   final SheetRequest request;
   const NoticeSheet({
-    Key? key,
+    super.key,
     required this.completer,
     required this.request,
-  }) : super(key: key);
+  });
 
   @override
   Widget builder(
@@ -45,7 +46,40 @@ class NoticeSheet extends StackedView<NoticeSheetModel> {
             maxLines: 3,
             softWrap: true,
           ),
-          verticalSpaceLarge,
+          if(request.mainButtonTitle!=null || request.secondaryButtonTitle!=null)
+          ButtonBar(
+            children: [
+              if(request.mainButtonTitle!=null)
+              OutlinedButton.icon(
+                style: positiveOutlineButtonStyle(
+                    foreGroundColor: Theme.of(context).primaryColor,
+                    shadowColor: Theme.of(context).primaryColorDark),
+                onPressed: () {
+                  completer!(
+                    SheetResponse(confirmed: true,),
+                  );
+                },
+                icon: const Icon(Icons.check),
+                label: Text(
+                  request.mainButtonTitle!,
+                ),
+              ),
+              verticalSpaceLarge,
+              if(request.secondaryButtonTitle!=null)
+              OutlinedButton.icon(
+                style: negativeOutlineButtonStyle,
+                onPressed: () {
+                  completer!(
+                    SheetResponse(confirmed: false,),
+                  );
+                },
+                icon: const Icon(Icons.close),
+                label: Text(
+                  request.secondaryButtonTitle!,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

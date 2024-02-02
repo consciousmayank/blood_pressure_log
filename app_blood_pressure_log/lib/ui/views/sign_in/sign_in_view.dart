@@ -58,15 +58,17 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                                     width: 10,
                                     child: CircularProgressIndicator(),
                                   )
-                                : viewModel.userNameDetails!=null ? viewModel.userNameAvailable
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Colors.green,
-                                      )
-                                    : const Icon(
-                                        Icons.close,
-                                        color: Colors.red,
-                                      ) : const SizedBox.shrink(),
+                                : viewModel.userNameDetails != null
+                                    ? viewModel.userNameAvailable
+                                        ? const Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                          )
+                                        : const Icon(
+                                            Icons.close,
+                                            color: Colors.red,
+                                          )
+                                    : const SizedBox.shrink(),
                         errorText: viewModel.userEmailValidationMessage,
                         labelText: 'Enter Email',
                         hintText: 'JohnDoe@yopmail.com',
@@ -88,16 +90,19 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: viewModel.obscurePassword,
                     decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            viewModel.obscurePassword =
-                            !viewModel.obscurePassword;
-                            viewModel.rebuildUi();
-                          },
-                          icon: Icon(viewModel.obscurePassword
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          viewModel.obscurePassword =
+                              !viewModel.obscurePassword;
+                          viewModel.rebuildUi();
+                        },
+                        icon: Icon(
+                          viewModel.obscurePassword
                               ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined, size: 20,),
+                              : Icons.visibility_outlined,
+                          size: 20,
                         ),
+                      ),
                       errorText: viewModel.passwordValidationMessage,
                       labelText: 'Enter password',
                       hintText: 'Password',
@@ -119,12 +124,15 @@ class SignInView extends StackedView<SignInViewModel> with $SignInView {
                       suffixIcon: IconButton(
                         onPressed: () {
                           viewModel.obscureReEnterPassword =
-                          !viewModel.obscureReEnterPassword;
+                              !viewModel.obscureReEnterPassword;
                           viewModel.rebuildUi();
                         },
-                        icon: Icon(viewModel.obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined, size: 20,),
+                        icon: Icon(
+                          viewModel.obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 20,
+                        ),
                       ),
                       errorText: viewModel.reEnterPasswordValidationMessage,
                       labelText: 'Re-enter password',

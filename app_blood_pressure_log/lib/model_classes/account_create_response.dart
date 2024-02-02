@@ -18,17 +18,19 @@ class AccountCreateResponse {
         otp: otp ?? this.otp,
       );
 
-  factory AccountCreateResponse.fromJson(String str) => AccountCreateResponse.fromMap(json.decode(str));
+  factory AccountCreateResponse.fromJson(String str) =>
+      AccountCreateResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory AccountCreateResponse.fromMap(Map<String, dynamic> json) => AccountCreateResponse(
-    detail: json["detail"],
-    otp: json["OTP"],
-  );
+  factory AccountCreateResponse.fromMap(Map<String, dynamic> json) =>
+      AccountCreateResponse(
+        detail: json["detail"],
+        otp: json["OTP"],
+      );
 
   Map<String, dynamic> toMap() => {
-    "detail": detail,
-    "OTP": otp,
-  };
+        "detail": detail,
+        "OTP": otp,
+      };
 }

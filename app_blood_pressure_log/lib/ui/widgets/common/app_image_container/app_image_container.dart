@@ -1,3 +1,4 @@
+import 'package:app_blood_pressure_log/app/app.logger.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:helper_package/helper_package.dart';
@@ -27,7 +28,10 @@ class AppImageContainer extends StackedView<AppImageContainerModel> {
         width: width ?? screenWidth(context),
         fit: BoxFit.fitWidth,
         imageUrl: imageUrl,
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) {
+          getLogger('AppImageContainer').wtf(error.toString());
+          return const Icon(Icons.error);
+        },
         httpHeaders: {
           "Authorization": viewModel.fetchToken(),
         });

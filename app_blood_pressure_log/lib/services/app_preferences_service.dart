@@ -67,7 +67,7 @@ class AppPreferencesService
 
   @override
   bool isUserLoggedIn() {
-    return fetchToken() != null && fetchToken()?.accessToken!=null ;
+    return fetchToken() != null && fetchToken()?.accessToken != null;
   }
 
   @override
@@ -90,11 +90,33 @@ class AppPreferencesService
   String fetchImageToken() {
     return appHelperBox.get(_imageTokenKey, defaultValue: "");
   }
+
+  @override
+  bool isAppIntroShownOnce() {
+    return appHelperBox.get(_appIntroOnceKey, defaultValue: false);
+  }
+
+  @override
+  void shownAppIntroOnce(bool value) {
+    appHelperBox.put(_appIntroOnceKey, value);
+  }
+
+  @override
+  bool isAppPermissionsShownOnce() {
+    return appHelperBox.get(_appPermissionsShownOnceKey, defaultValue: false);
+  }
+
+  @override
+  void shownAppPermissionsOnce(bool value) {
+    appHelperBox.put(_appPermissionsShownOnceKey, value);
+  }
 }
 
 const String _preferencesEncryptionKey = 'preferencesEncryptionKey';
 const String _tokenKey = 'tokenKey';
-const String _imageTokenKey = '_imageTokenKey';
+const String _imageTokenKey = 'imageTokenKey';
+const String _appIntroOnceKey = 'appIntroOnceKey';
+const String _appPermissionsShownOnceKey = 'appPermissionsShownOnceKey';
 
 abstract class InterFaceAppPreferences {
   void saveTokens({required LoginResponse? loginResponse});
@@ -107,4 +129,10 @@ abstract class InterFaceAppPreferences {
 
   void saveImageToken({required String token});
   String fetchImageToken();
+
+  void shownAppIntroOnce(bool value);
+  bool isAppIntroShownOnce();
+
+  void shownAppPermissionsOnce(bool value);
+  bool isAppPermissionsShownOnce();
 }

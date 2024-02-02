@@ -9,9 +9,11 @@
 import 'package:stacked_services/src/bottom_sheet/bottom_sheet_service.dart';
 import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
+import 'package:stacked_services/src/snackbar/snackbar_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
 import '../services/app_network_service.dart';
+import '../services/app_permissions_service.dart';
 import '../services/app_preferences_service.dart';
 import '../services/push_notifications_service.dart';
 
@@ -34,8 +36,13 @@ Future<void> setupLocator({
   await pushNotificationsService.init();
   locator.registerSingleton(pushNotificationsService);
 
+  final appPermissionsService = AppPermissionsService();
+  await appPermissionsService.init();
+  locator.registerSingleton(appPermissionsService);
+
   locator.registerLazySingleton(() => BottomSheetService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => AppNetworkService());
+  locator.registerLazySingleton(() => SnackbarService());
 }

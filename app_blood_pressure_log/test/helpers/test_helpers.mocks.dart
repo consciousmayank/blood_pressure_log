@@ -12,9 +12,13 @@ import 'package:app_blood_pressure_log/model_classes/account_create_response.dar
     as _i3;
 import 'package:app_blood_pressure_log/model_classes/logged_in_user.dart'
     as _i4;
+import 'package:app_blood_pressure_log/model_classes/login/login_response.dart'
+    as _i16;
 import 'package:app_blood_pressure_log/model_classes/record.dart' as _i12;
 import 'package:app_blood_pressure_log/services/app_network_service.dart'
     as _i11;
+import 'package:app_blood_pressure_log/services/app_permissions_service.dart'
+    as _i17;
 import 'package:app_blood_pressure_log/services/app_preferences_service.dart'
     as _i15;
 import 'package:flutter/material.dart' as _i8;
@@ -22,6 +26,7 @@ import 'package:hive_flutter/hive_flutter.dart' as _i5;
 import 'package:logger/src/logger.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:permission_handler/permission_handler.dart' as _i18;
 import 'package:stacked_services/stacked_services.dart' as _i6;
 
 // ignore_for_file: type=lint
@@ -153,7 +158,7 @@ class MockNavigationService extends _i1.Mock implements _i6.NavigationService {
     Duration? duration,
     bool? popGesture,
     int? id,
-    dynamic curve,
+    _i8.Curve? curve,
     bool? fullscreenDialog = false,
     bool? preventDuplicates = true,
     _i6.Transition? transitionClass,
@@ -189,7 +194,7 @@ class MockNavigationService extends _i1.Mock implements _i6.NavigationService {
     Duration? duration,
     bool? popGesture,
     int? id,
-    dynamic curve,
+    _i8.Curve? curve,
     bool? fullscreenDialog = false,
     bool? preventDuplicates = true,
     _i6.Transition? transitionClass,
@@ -288,7 +293,7 @@ class MockNavigationService extends _i1.Mock implements _i6.NavigationService {
     dynamic arguments,
     int? id,
     bool? opaque,
-    dynamic curve,
+    _i8.Curve? curve,
     Duration? duration,
     bool? fullscreenDialog = false,
     bool? popGesture,
@@ -726,6 +731,19 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
 /// See the documentation for Mockito's code generation for more information.
 class MockAppNetworkService extends _i1.Mock implements _i11.AppNetworkService {
   @override
+  String get baseUrl => (super.noSuchMethod(
+        Invocation.getter(#baseUrl),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+        returnValueForMissingStub: _i7.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+      ) as String);
+
+  @override
   _i2.Logger get log => (super.noSuchMethod(
         Invocation.getter(#log),
         returnValue: _FakeLogger_0(
@@ -1019,11 +1037,12 @@ class MockAppPreferencesService extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
-  void saveTokens({required String? loginResponse}) => super.noSuchMethod(
+  void saveTokens({required _i16.LoginResponse? loginResponse}) =>
+      super.noSuchMethod(
         Invocation.method(
-          #saveToken,
+          #saveTokens,
           [],
-          {#token: loginResponse},
+          {#loginResponse: loginResponse},
         ),
         returnValueForMissingStub: null,
       );
@@ -1037,28 +1056,6 @@ class MockAppPreferencesService extends _i1.Mock
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
-
-  @override
-  String fetchToken() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchToken,
-          [],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchToken,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchToken,
-            [],
-          ),
-        ),
-      ) as String);
 
   @override
   void logout() => super.noSuchMethod(
@@ -1100,4 +1097,151 @@ class MockAppPreferencesService extends _i1.Mock
           ),
         ),
       ) as String);
+
+  @override
+  bool isAppIntroShownOnce() => (super.noSuchMethod(
+        Invocation.method(
+          #isAppIntroShownOnce,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  void shownAppIntroOnce(bool? value) => super.noSuchMethod(
+        Invocation.method(
+          #shownAppIntroOnce,
+          [value],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  bool isAppPermissionsShownOnce() => (super.noSuchMethod(
+        Invocation.method(
+          #isAppPermissionsShownOnce,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  void shownAppPermissionsOnce(bool? value) => super.noSuchMethod(
+        Invocation.method(
+          #shownAppPermissionsOnce,
+          [value],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [AppPermissionsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAppPermissionsService extends _i1.Mock
+    implements _i17.AppPermissionsService {
+  @override
+  Map<_i18.Permission, _i18.PermissionStatus> get appPermissionsStatuses =>
+      (super.noSuchMethod(
+        Invocation.getter(#appPermissionsStatuses),
+        returnValue: <_i18.Permission, _i18.PermissionStatus>{},
+        returnValueForMissingStub: <_i18.Permission, _i18.PermissionStatus>{},
+      ) as Map<_i18.Permission, _i18.PermissionStatus>);
+
+  @override
+  set appPermissionsStatuses(
+          Map<_i18.Permission, _i18.PermissionStatus>?
+              _appPermissionsStatuses) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #appPermissionsStatuses,
+          _appPermissionsStatuses,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  List<_i18.Permission> get appPermissions => (super.noSuchMethod(
+        Invocation.getter(#appPermissions),
+        returnValue: <_i18.Permission>[],
+        returnValueForMissingStub: <_i18.Permission>[],
+      ) as List<_i18.Permission>);
+
+  @override
+  set appPermissions(List<_i18.Permission>? _appPermissions) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #appPermissions,
+          _appPermissions,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  Map<_i18.Permission, _i18.PermissionStatus> get statuses =>
+      (super.noSuchMethod(
+        Invocation.getter(#statuses),
+        returnValue: <_i18.Permission, _i18.PermissionStatus>{},
+        returnValueForMissingStub: <_i18.Permission, _i18.PermissionStatus>{},
+      ) as Map<_i18.Permission, _i18.PermissionStatus>);
+
+  @override
+  _i18.PermissionStatus getPermissionFor(
+          {required _i18.Permission? permission}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPermissionFor,
+          [],
+          {#permission: permission},
+        ),
+        returnValue: _i18.PermissionStatus.denied,
+        returnValueForMissingStub: _i18.PermissionStatus.denied,
+      ) as _i18.PermissionStatus);
+
+  @override
+  _i9.Future<dynamic> denyPermissions() => (super.noSuchMethod(
+        Invocation.method(
+          #denyPermissions,
+          [],
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  bool arePermissionsGranted() => (super.noSuchMethod(
+        Invocation.method(
+          #arePermissionsGranted,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  _i9.Future<Map<_i18.Permission, _i18.PermissionStatus>>
+      requestAppPermissions() => (super.noSuchMethod(
+            Invocation.method(
+              #requestAppPermissions,
+              [],
+            ),
+            returnValue:
+                _i9.Future<Map<_i18.Permission, _i18.PermissionStatus>>.value(
+                    <_i18.Permission, _i18.PermissionStatus>{}),
+            returnValueForMissingStub:
+                _i9.Future<Map<_i18.Permission, _i18.PermissionStatus>>.value(
+                    <_i18.Permission, _i18.PermissionStatus>{}),
+          ) as _i9.Future<Map<_i18.Permission, _i18.PermissionStatus>>);
+
+  @override
+  _i9.Future<void> init() => (super.noSuchMethod(
+        Invocation.method(
+          #init,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }

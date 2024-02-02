@@ -1,7 +1,5 @@
-import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:app_blood_pressure_log/app/app.logger.dart';
-import 'package:app_blood_pressure_log/firebase_options.dart';
-import 'package:app_blood_pressure_log/services/app_network_service.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -16,6 +14,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class PushNotificationsService implements InitializableDependency {
+  NotificationSettings? settings;
   var log = getLogger("PushNotificationsService");
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -45,7 +44,8 @@ class PushNotificationsService implements InitializableDependency {
   Future initializePushNotifications() async {
     // You may set the permission requests to "provisional" which allows the user to choose what type
     // of notifications they would like to receive once the user receives a notification.
-    NotificationSettings settings = await messaging.requestPermission();
+
+    settings = await messaging.requestPermission();
 
     //Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -67,6 +67,11 @@ class PushNotificationsService implements InitializableDependency {
 
   @override
   Future<void> init() async {
-    await initializePushNotifications();
+    AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    AndroidBuildVersion version = androidInfo.version;
+    int? sdk = version.sdkInt ?? 29;
+    if (!(sdk > 29)) {
+      await initializePushNotifications();
+    }
   }
 }

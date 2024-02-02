@@ -2,10 +2,13 @@ import 'package:app_blood_pressure_log/app/app.bottomsheets.dart';
 import 'package:app_blood_pressure_log/app/app.dialogs.dart';
 import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:app_blood_pressure_log/app/app.router.dart';
+import 'package:app_blood_pressure_log/app/app.snackbar.dart';
 import 'package:app_blood_pressure_log/model_classes/record.dart';
 import 'package:app_blood_pressure_log/services/app_network_service.dart';
 import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_sheet.dart';
+import 'package:app_blood_pressure_log/ui/bottom_sheets/view_record/view_record_sheet_model.dart';
 import 'package:app_blood_pressure_log/ui/common/app_strings.dart';
+import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -14,7 +17,7 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final IAppNetworkService _networkService = locator<AppNetworkService>();
   final _navigationService = locator<NavigationService>();
-
+  final _snackBarService = locator<SnackbarService>();
   Map<String, List<Records>> recordsList = {};
 
   void fetchAllRecords() async {
@@ -23,16 +26,6 @@ class HomeViewModel extends BaseViewModel {
       busyObject: fetchRecordsBusyObject,
     );
     rebuildUi();
-  }
-
-  void openAddNewRecordView() async {
-    DialogResponse? response = await _dialogService.showCustomDialog(
-      variant: DialogType.addEntry,
-    );
-
-    if (response != null && response.confirmed) {
-      fetchAllRecords();
-    }
   }
 
   void logout() async {
@@ -61,13 +54,48 @@ class HomeViewModel extends BaseViewModel {
     );
   }
 
-  void openRecordViewBottomSheet({required Records recordToView}) {
-    _bottomSheetService.showCustomSheet(
+  void openRecordViewBottomSheet({required Records recordToView}) async {
+    SheetResponse? response = await _bottomSheetService.showCustomSheet(
         barrierDismissible: true,
         variant: BottomSheetType.viewRecord,
         data: ViewRecordSheetModelInArguments(
           recordToShow: recordToView,
         ),
         isScrollControlled: true);
+
+    if (response != null && response.confirmed) {
+      if (response.data is ViewRecordOption) {
+        ViewRecordOption option = response.data;
+        if (option == ViewRecordOption.deleted_record) {
+          _snackBarService.showCustomSnackBar(
+            message: 'Record Deleted',
+            variant: SnackBarType.normal,
+          );
+          fetchAllRecords();
+        } else if (option == ViewRecordOption.edit_record) {
+          openAddNewRecordView(recordToEdit: recordToView);
+        }
+      } else {}
+    }
+  }
+
+  void openAddNewRecordView({
+    Records? recordToEdit,
+  }) async {
+    SheetResponse? response = await _bottomSheetService.showCustomSheet(
+        barrierDismissible: true,
+        variant: BottomSheetType.addRecord,
+        data: recordToEdit,
+        isScrollControlled: true);
+
+    if (response != null && response.confirmed) {
+      fetchAllRecords();
+
+      if (response.data != null && recordToEdit != null) {
+        Records updatedRecord = response.data as Records;
+
+        openRecordViewBottomSheet(recordToView: updatedRecord);
+      }
+    }
   }
 }

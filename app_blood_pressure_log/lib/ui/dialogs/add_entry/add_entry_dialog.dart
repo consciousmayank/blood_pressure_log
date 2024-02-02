@@ -36,12 +36,12 @@ class AddEntryDialog extends StackedView<AddEntryDialogModel>
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: viewModel.busy(createRecordBusyObject)
             ? SizedBox(
-              height: screenHeight(context)/4,
-              width: screenHeight(context)/4,
-              child: const Center(
+                height: screenHeight(context) / 4,
+                width: screenHeight(context) / 4,
+                child: const Center(
                   child: CircularProgressIndicator(),
                 ),
-            )
+              )
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

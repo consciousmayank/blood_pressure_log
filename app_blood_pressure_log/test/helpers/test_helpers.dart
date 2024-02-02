@@ -5,6 +5,7 @@ import 'package:app_blood_pressure_log/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:app_blood_pressure_log/services/app_network_service.dart';
 import 'package:app_blood_pressure_log/services/app_preferences_service.dart';
+import 'package:app_blood_pressure_log/services/app_permissions_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -15,6 +16,7 @@ import 'test_helpers.mocks.dart';
   MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<AppNetworkService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<AppPreferencesService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<AppPermissionsService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
 ])
 void registerServices() {
@@ -23,6 +25,7 @@ void registerServices() {
   getAndRegisterDialogService();
   getAndRegisterAppNetworkService();
   getAndRegisterAppPreferencesService();
+  getAndRegisterAppPermissionsService();
 // @stacked-mock-register
 }
 
@@ -90,6 +93,12 @@ MockAppPreferencesService getAndRegisterAppPreferencesService() {
   return service;
 }
 
+MockAppPermissionsService getAndRegisterAppPermissionsService() {
+  _removeRegistrationIfExists<AppPermissionsService>();
+  final service = MockAppPermissionsService();
+  locator.registerSingleton<AppPermissionsService>(service);
+  return service;
+}
 // @stacked-mock-create
 
 void _removeRegistrationIfExists<T extends Object>() {

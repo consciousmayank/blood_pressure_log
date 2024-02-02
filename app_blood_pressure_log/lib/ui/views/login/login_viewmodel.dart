@@ -77,10 +77,12 @@ class LoginViewModel extends FormViewModel {
           DioException dioError = error;
           if (dioError.response?.statusCode == 401) {
             ApiError loginError = ApiError.fromMap(dioError.response!.data);
-            bottomSheetService.showCustomSheet(
+            bottomSheetService
+                .showCustomSheet(
               variant: BottomSheetType.errors,
               data: ErrorsSheetInArgs(description: loginError.detail),
-            ).then((value){
+            )
+                .then((value) {
               clearForm();
             });
           }

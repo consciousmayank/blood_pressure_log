@@ -159,8 +159,7 @@ class SignInViewModel extends FormViewModel with IndexTrackingStateHelper {
         } else if (key == accountCreateValidationBusyObject) {
           if (dioError.response?.statusCode == 400) {
             ApiError apiError = ApiError.fromMap(dioError.response!.data);
-            _bottomSheetService
-                .showCustomSheet(
+            _bottomSheetService.showCustomSheet(
               variant: BottomSheetType.errors,
               data: ErrorsSheetInArgs(
                 description: apiError.detail,

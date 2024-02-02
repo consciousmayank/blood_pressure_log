@@ -1,3 +1,4 @@
+import 'package:app_blood_pressure_log/ui/common/semantics_extensions.dart';
 import 'package:app_blood_pressure_log/ui/views/login/login_view.form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -46,10 +47,12 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                                 controller: userEmailController,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
-                                  errorText: viewModel.userEmailValidationMessage,
+                                  errorText:
+                                      viewModel.userEmailValidationMessage,
                                   labelText: 'Enter Email Address',
                                   hintText: 'johndoe@yopmail.com',
-                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
                                   alignLabelWithHint: true,
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
@@ -58,7 +61,10 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                                     passwordFocusNode.requestFocus(),
                                 onFieldSubmitted: (value) =>
                                     passwordFocusNode.requestFocus(),
-                              ).animate().slideX(
+                              )
+                                  .semantic(semanticsLabel: "userName")
+                                  .animate()
+                                  .slideX(
                                     delay: 100.milliseconds,
                                     duration: 500.milliseconds,
                                     begin: -10,
@@ -92,7 +98,10 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                                     hideKeyboard(context: context),
                                 onFieldSubmitted: (value) =>
                                     hideKeyboard(context: context),
-                              ).animate().slideX(
+                              )
+                                  .semantic(semanticsLabel: "password")
+                                  .animate()
+                                  .slideX(
                                     delay: 100.milliseconds,
                                     duration: 500.milliseconds,
                                     begin: 10,
@@ -110,12 +119,17 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                           viewModel.login();
                         },
                         child: const Text('Login'),
-                      ).animate().slideX(duration: 2.seconds, begin: 100, end: 0),
+                      )
+                          .semantic(semanticsLabel: "loginButton")
+                          .animate()
+                          .slideX(duration: 2.seconds, begin: 100, end: 0),
                       verticalSpaceMedium,
                       Text(
                         'Or',
                         style: Theme.of(context).textTheme.bodyLarge,
-                      ).animate().blurXY(duration: 5.seconds, begin: 200, end: 0),
+                      )
+                          .animate()
+                          .blurXY(duration: 5.seconds, begin: 200, end: 0),
                       verticalSpaceMedium,
                       OutlinedButton(
                         onPressed: () {
@@ -125,6 +139,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                           'Create account',
                         ),
                       )
+                          .semantic(semanticsLabel: "createAccountButton")
                           .animate()
                           .slideX(duration: 2.seconds, begin: -100, end: 0),
                     ],

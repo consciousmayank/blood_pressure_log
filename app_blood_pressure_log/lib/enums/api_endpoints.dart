@@ -1,14 +1,14 @@
-
-mixin ApiEndPointsOperations{
-  ApiEndPoints getApiEndPointFromUrl({required String path}) => ApiEndPoints.none;
+mixin ApiEndPointsOperations {
+  ApiEndPoints getApiEndPointFromUrl({required String path}) =>
+      ApiEndPoints.none;
   bool isTokenRequired({required ApiEndPoints apiEndPoint}) => false;
 }
 
-enum ApiEndPoints with ApiEndPointsOperations{
+enum ApiEndPoints with ApiEndPointsOperations {
   saveRecord('/save_record'),
-  deleteRecord('/delete_record'),
+  deleteRecord('/record/'),
   getRecords('/get_records'),
-  updateRecord('update_record'),
+  updateRecord('/update_record'),
   login('/token'),
   createAccount('/register'),
   validateAccount('/verify/'),
@@ -25,27 +25,27 @@ enum ApiEndPoints with ApiEndPointsOperations{
 
   @override
   ApiEndPoints getApiEndPointFromUrl({required String path}) {
-    if (path == ApiEndPoints.saveRecord.url) {
+    if (path.contains(ApiEndPoints.saveRecord.url)) {
       return ApiEndPoints.saveRecord;
-    } else if (path == ApiEndPoints.deleteRecord.url) {
+    } else if (path.contains(ApiEndPoints.deleteRecord.url)) {
       return ApiEndPoints.deleteRecord;
-    } else if (path == ApiEndPoints.getRecords.url) {
+    } else if (path.contains(ApiEndPoints.getRecords.url)) {
       return ApiEndPoints.getRecords;
-    } else if (path == ApiEndPoints.updateRecord.url) {
+    } else if (path.contains(ApiEndPoints.updateRecord.url)) {
       return ApiEndPoints.updateRecord;
-    } else if (path == ApiEndPoints.login.url) {
+    } else if (path.contains(ApiEndPoints.login.url)) {
       return ApiEndPoints.login;
-    } else if (path == ApiEndPoints.createAccount.url) {
+    } else if (path.contains(ApiEndPoints.createAccount.url)) {
       return ApiEndPoints.createAccount;
-    } else if (path == ApiEndPoints.validateAccount.url) {
+    } else if (path.contains(ApiEndPoints.validateAccount.url)) {
       return ApiEndPoints.validateAccount;
-    } else if (path == ApiEndPoints.fetchAppConfigs.url) {
+    } else if (path.contains(ApiEndPoints.fetchAppConfigs.url)) {
       return ApiEndPoints.fetchAppConfigs;
-    } else if (path == ApiEndPoints.fetchUserDetails.url) {
+    } else if (path.contains(ApiEndPoints.fetchUserDetails.url)) {
       return ApiEndPoints.fetchUserDetails;
-    } else if (path == ApiEndPoints.saveFcmToken.url) {
+    } else if (path.contains(ApiEndPoints.saveFcmToken.url)) {
       return ApiEndPoints.saveFcmToken;
-    } else if (path == ApiEndPoints.isUserNameAvailable.url) {
+    } else if (path.contains(ApiEndPoints.isUserNameAvailable.url)) {
       return ApiEndPoints.isUserNameAvailable;
     } else {
       return ApiEndPoints.refreshToken;
@@ -72,6 +72,5 @@ enum ApiEndPoints with ApiEndPointsOperations{
       case ApiEndPoints.none:
         return false;
     }
-
   }
 }

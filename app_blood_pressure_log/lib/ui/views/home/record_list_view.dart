@@ -1,6 +1,8 @@
+import 'package:app_blood_pressure_log/app/app.snackbar.dart';
 import 'package:app_blood_pressure_log/ui/views/home/home_viewmodel.dart';
 import 'package:app_blood_pressure_log/ui/widgets/common/app_image_container/app_image_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:helper_package/helper_package.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -23,7 +25,7 @@ class RecordListView extends ViewModelWidget<HomeViewModel> {
           onTap: () {
             locator<SnackbarService>().showCustomSnackBar(
               message: 'Open Bottom sheet to view all entries of this day',
-              variant: SnackbarType.normal,
+              variant: SnackBarType.normal,
             );
           },
           title: Row(
@@ -36,14 +38,15 @@ class RecordListView extends ViewModelWidget<HomeViewModel> {
                     .replaceAll('-', ' '),
               ),
               const Spacer(),
-              ActionChip(
-                  shape: getCardShape(radius: 20),
-                  padding: const EdgeInsets.all(2),
-                  label: Text('Avg. ${viewModel.getAvg(
-                    date: viewModel.recordsList.keys.elementAt(
-                      index,
+              Text(
+                '${viewModel.recordsList.values.elementAt(index).length} ${viewModel.recordsList.values.elementAt(index).length > 1 ? 'records' : 'record'}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                  )}'))
+              ).animate(onPlay: (controller) => controller.repeat()).shimmer(
+                    duration: 4200.ms,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
             ],
           ),
           subtitle: Padding(
@@ -52,11 +55,11 @@ class RecordListView extends ViewModelWidget<HomeViewModel> {
             ),
             child: Wrap(
               clipBehavior: Clip.antiAlias,
-              crossAxisAlignment: WrapCrossAlignment.end,
-              runAlignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              runAlignment: WrapAlignment.start,
               direction: Axis.horizontal,
-              spacing: 2,
-              alignment: WrapAlignment.end,
+              spacing: 3,
+              alignment: WrapAlignment.center,
               children: viewModel.recordsList.values
                   .elementAt(index)
                   .map(

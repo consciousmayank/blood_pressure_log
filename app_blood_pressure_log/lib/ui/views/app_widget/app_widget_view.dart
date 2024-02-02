@@ -1,5 +1,7 @@
 import 'package:app_blood_pressure_log/app/app.logger.dart';
 import 'package:app_blood_pressure_log/app/app.router.dart';
+import 'package:app_blood_pressure_log/ui/views/home/home_view.dart';
+import 'package:app_blood_pressure_log/ui/views/home/home_viewmodel.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
