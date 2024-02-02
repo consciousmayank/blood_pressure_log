@@ -27,11 +27,11 @@ def create_credentials_exception(detail: str) -> HTTPException:
 
 
 def access_token_expire_minutes() -> int:
-    return 1
+    return 60 * 60 * 24 * 1  # 1 day (in minutes)
 
 
 def refresh_token_expire_minutes() -> int:
-    return 2
+    return 60 * 60 * 24 * 3  # 3 days (in minutes)
 
 
 def create_access_token(email: str):
@@ -54,8 +54,29 @@ def create_refresh_token(email: str):
     return encoded_jwt
 
 
+def get_subject_for_refresh_token(token: str, ) -> str:
+    try:
+        payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+    except ExpiredSignatureError as e:
+        raise create_credentials_exception("Token has expired") from e
+    except JWTError as e:
+        raise create_credentials_exception("Invalid token") from e
+
+    email = payload.get("sub")
+    if email is None:
+        raise create_credentials_exception("Token is missing 'sub' field")
+
+    token_type = payload.get("type")
+    if token_type is None or token_type != token_type:
+        raise create_credentials_exception(
+            f"Token has incorrect type, unexpected type '{token_type}'"
+        )
+
+    return email
+
+
 def get_subject_for_token_type(
-        token: str, type: Literal["access", "refresh"]
+        token: str, token_type: Literal["access", "refresh"]
 ) -> str:
     try:
         payload = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
@@ -69,9 +90,9 @@ def get_subject_for_token_type(
         raise create_credentials_exception("Token is missing 'sub' field")
 
     token_type = payload.get("type")
-    if token_type is None or token_type != type:
+    if token_type is None or token_type != token_type:
         raise create_credentials_exception(
-            f"Token has incorrect type, unexpected type '{type}'"
+            f"Token has incorrect type, unexpected type '{token_type}'"
         )
 
     return email
@@ -128,8 +149,9 @@ async def authenticate_user(email: str, password: str):
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
-                           token_type: Literal["access", "refresh"] = 'access'):
-    email = get_subject_for_token_type(token, token_type)
+                           # token_type: Literal["access", "refresh"] = 'access',
+                           ):
+    email = get_subject_for_token_type(token, "access")
     user = await get_user(email=email)
     if user is None:
         raise create_credentials_exception("Could not find user for this token")

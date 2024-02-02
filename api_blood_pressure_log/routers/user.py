@@ -76,7 +76,7 @@ async def login(user: UserIn):
 
 @router.post("/token_refresh")
 async def token_refresh(refresh_token: RefreshToken):
-    user_email = get_subject_for_token_type(token=refresh_token.token, type="refresh")
+    user_email = get_subject_for_token_type(token=refresh_token.token, token_type="refresh")
     access_token = create_access_token(user_email)
     return {"access_token": access_token, "token_type": "refresh", "refresh_token": refresh_token.token}
 
